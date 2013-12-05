@@ -19,6 +19,14 @@ namespace MJ_HorseLab2
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Model test;
+        Camera camera;
+        Voxel voxel;
+        Texture2D texture;
+
+        BasicEffect effect;
+
+        float moveScale = 8f;
+        float rotateScale = MathHelper.PiOver2;
 
         public Game1()
         {
@@ -34,7 +42,9 @@ namespace MJ_HorseLab2
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            effect= new BasicEffect(GraphicsDevice);
+            camera = new Camera(new Vector3(-1, 0, -5), 0, MathHelper.PiOver4, 0.05f, 100f);
+            //effect.View = Matrix.Identity;
 
             base.Initialize();
         }
@@ -47,7 +57,8 @@ namespace MJ_HorseLab2
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             test = Content.Load<Model>("test");
-
+            texture = Content.Load<Texture2D>("elda");
+            voxel = new Voxel(this.GraphicsDevice, texture);
         }
 
         /// <summary>
@@ -70,6 +81,35 @@ namespace MJ_HorseLab2
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            KeyboardState keyState = Keyboard.GetState();
+            float moveAmount = 0;
+
+            if (keyState.IsKeyDown(Keys.Right))
+            {
+                camera.Rotation = MathHelper.WrapAngle(camera.Rotation - (rotateScale * elapsed));
+            }
+            if (keyState.IsKeyDown(Keys.Left))
+            {
+                camera.Rotation = MathHelper.WrapAngle(camera.Rotation + (rotateScale * elapsed));
+            }
+            if (keyState.IsKeyDown(Keys.Up))
+            {
+                moveAmount = moveScale * elapsed;
+            }
+            if (keyState.IsKeyDown(Keys.Down))
+            {
+                moveAmount = -moveScale * elapsed;
+            }
+
+            if (moveAmount != 0)
+            {
+                Vector3 newLocation = camera.PreviewMove(moveAmount);
+                bool moveOk = true;
+
+                if (moveOk)
+                    camera.MoveForward(moveAmount);
+            }
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -82,8 +122,7 @@ namespace MJ_HorseLab2
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            DrawModel(test);
-            // TODO: Add your drawing code here
+            voxel.Draw(camera, effect);
 
             base.Draw(gameTime);
         }
