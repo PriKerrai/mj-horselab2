@@ -18,6 +18,7 @@ namespace MJ_HorseLab2
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Model test;
 
         public Game1()
         {
@@ -44,10 +45,9 @@ namespace MJ_HorseLab2
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            test = Content.Load<Model>("test");
 
-            // TODO: use this.Content to load your game content here
         }
 
         /// <summary>
@@ -82,10 +82,31 @@ namespace MJ_HorseLab2
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            DrawModel(test);
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
         }
+
+        private void DrawModel(Model m)
+        {
+            Vector3 position = new Vector3(0, 0, 0);
+            Matrix[] transforms = new Matrix[m.Bones.Count];
+            float aspectRatio = graphics.GraphicsDevice.Viewport.Width / graphics.GraphicsDevice.Viewport.Height;
+            m.CopyAbsoluteBoneTransformsTo(transforms);
+            Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), 
+            aspectRatio, 1.0f, 10000.0f); 
+            Matrix view = Matrix.CreateLookAt(new Vector3(0.0f, 50.0f, 1 /*Zoom*/),Vector3.Zero, Vector3.Up);
+            foreach (ModelMesh mesh in m.Meshes){
+                foreach (BasicEffect effect in mesh.Effects){
+                    effect.EnableDefaultLighting();
+                    effect.View = view; 
+                    effect.Projection = projection;
+                    effect.World = transforms[mesh.ParentBone.Index] * Matrix.CreateTranslation(position); //Position //gameWorldRotation * 
+                    }
+                mesh.Draw();
+            }
+        }
+
     }
 }
