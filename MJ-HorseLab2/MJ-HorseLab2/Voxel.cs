@@ -11,14 +11,17 @@ namespace MJ_HorseLab2
     {
         private List<VertexPositionTexture> vertices = new List<VertexPositionTexture>();
         private Vector3 location;
-        private Texture2D texture;
+        private Texture2D texture, texture2;
         private GraphicsDevice device;
         private VertexBuffer voxelBuffer;
+        BasicEffect effect;
 
-        public Voxel(GraphicsDevice device, Texture2D texture)
+        public Voxel(GraphicsDevice device, Texture2D texture, Texture2D texture2, BasicEffect effect)
         {
             this.device = device;
             this.texture = texture;
+            this.texture2 = texture2;
+            this.effect = effect;
             SetUpVertices();
         }
 
@@ -28,19 +31,29 @@ namespace MJ_HorseLab2
             BuildFace(new Vector3(0, 0, 1), new Vector3(1, 1, 1));
             BuildFace(new Vector3(1, 0, 1), new Vector3(1, 1, 0));
             BuildFace(new Vector3(1, 0, 0), new Vector3(0, 1, 0));
+            
             voxelBuffer = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, vertices.Count, BufferUsage.WriteOnly);
             voxelBuffer.SetData<VertexPositionTexture>(vertices.ToArray());
         }
 
         private void BuildFace(Vector3 point1, Vector3 point2)
         {
-            vertices.Add(BuildVertex(point1.X, point1.Y, point1.Z, 1, 0));
-            vertices.Add(BuildVertex(point1.X, point2.Y, point1.Z, 1, 1));
-            vertices.Add(BuildVertex(point2.X, point2.Y, point2.Z, 0, 1));
-            vertices.Add(BuildVertex(point2.X, point2.Y, point2.Z, 0, 1));
-            vertices.Add(BuildVertex(point2.X, point1.Y, point2.Z, 0, 0));
-            vertices.Add(BuildVertex(point1.X, point1.Y, point1.Z, 1, 0));
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 16; y++)
+                {
+                    for (int z = 0; z < 32; z++)
+                    {
+                        vertices.Add(BuildVertex(point1.X + x, point1.Y + y, point1.Z + z, 1, 0));
+                        vertices.Add(BuildVertex(point1.X + x, point2.Y + y, point1.Z + z, 1, 1));
+                        vertices.Add(BuildVertex(point2.X + x, point2.Y + y, point2.Z + z, 0, 1));
+                        vertices.Add(BuildVertex(point2.X + x, point2.Y + y, point2.Z + z, 0, 1));
+                        vertices.Add(BuildVertex(point2.X + x, point1.Y + y, point2.Z + z, 0, 0));
+                        vertices.Add(BuildVertex(point1.X + x, point1.Y + y, point1.Z + z, 1, 0));
 
+                    }
+                }
+            }
         }
 
         private VertexPositionTexture BuildVertex(float x, float y, float z, float u, float v)
@@ -58,10 +71,9 @@ namespace MJ_HorseLab2
         {
             effect.VertexColorEnabled = false;
             effect.TextureEnabled = true;
-            effect.Texture = texture;
+            effect.Texture = texture2;
             Matrix center = Matrix.CreateTranslation(new Vector3(-0.5f, -0.5f, -0.5f));
             Matrix translate = Matrix.CreateTranslation(location);
-            effect.World = center * translate;
             effect.View = camera.View;
             effect.Projection = camera.projection;
             effect.CurrentTechnique.Passes[0].Apply();
