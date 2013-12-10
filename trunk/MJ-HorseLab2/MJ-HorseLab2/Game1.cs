@@ -25,8 +25,9 @@ namespace MJ_HorseLab2
 
         BasicEffect effect;
 
-        float moveScale = 8f;
+        float moveScale = 12f;
         float rotateScale = MathHelper.PiOver2;
+        private Texture2D texture2;
 
         public Game1()
         {
@@ -43,7 +44,9 @@ namespace MJ_HorseLab2
         protected override void Initialize()
         {
             effect= new BasicEffect(GraphicsDevice);
-            camera = new Camera(new Vector3(-1, 0, -5), 0, MathHelper.PiOver4, 0.05f, 100f);
+            camera = new Camera(new Vector3(-1, 0, -20), 0, MathHelper.PiOver4, 0.05f, 100f);
+            effect.View = camera.View;
+            effect.Projection = camera.projection;
             //effect.View = Matrix.Identity;
 
             base.Initialize();
@@ -58,7 +61,8 @@ namespace MJ_HorseLab2
             spriteBatch = new SpriteBatch(GraphicsDevice);
             test = Content.Load<Model>("test");
             texture = Content.Load<Texture2D>("elda");
-            voxel = new Voxel(this.GraphicsDevice, texture);
+            texture2 = Content.Load<Texture2D>("mud");
+            voxel = new Voxel(this.GraphicsDevice, texture, texture2, this.effect);
         }
 
         /// <summary>
@@ -122,30 +126,35 @@ namespace MJ_HorseLab2
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            voxel.Draw(camera, effect);
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                voxel.Draw(camera, effect);
+            }
 
             base.Draw(gameTime);
         }
 
-        private void DrawModel(Model m)
-        {
-            Vector3 position = new Vector3(0, 0, 0);
-            Matrix[] transforms = new Matrix[m.Bones.Count];
-            float aspectRatio = graphics.GraphicsDevice.Viewport.Width / graphics.GraphicsDevice.Viewport.Height;
-            m.CopyAbsoluteBoneTransformsTo(transforms);
-            Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), 
-            aspectRatio, 1.0f, 10000.0f); 
-            Matrix view = Matrix.CreateLookAt(new Vector3(0.0f, 50.0f, 1 /*Zoom*/),Vector3.Zero, Vector3.Up);
-            foreach (ModelMesh mesh in m.Meshes){
-                foreach (BasicEffect effect in mesh.Effects){
-                    effect.EnableDefaultLighting();
-                    effect.View = view; 
-                    effect.Projection = projection;
-                    effect.World = transforms[mesh.ParentBone.Index] * Matrix.CreateTranslation(position); //Position //gameWorldRotation * 
-                    }
-                mesh.Draw();
-            }
-        }
+        //private void DrawModel(Model m)
+        //{
+
+        //    Matrix[] transforms = new Matrix[m.Bones.Count];
+        //    m.CopyAbsoluteBoneTransformsTo(transforms);
+        //    Matrix projection = camera.projection;
+
+        //    foreach (ModelMesh mesh in m.Meshes)
+        //    {
+        //        foreach (BasicEffect effect in mesh.Effects)
+        //        {
+        //            effect.EnableDefaultLighting();
+        //            effect.View = camera.View;
+        //            effect.Projection = projection;
+        //            effect.World = transforms[mesh.ParentBone.Index]; //Position //gameWorldRotation * 
+        //        }
+        //        mesh.Draw();
+        //    }
+        //}
 
     }
 }
