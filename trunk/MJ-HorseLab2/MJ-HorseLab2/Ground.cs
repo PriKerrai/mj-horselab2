@@ -19,7 +19,7 @@ namespace MJ_HorseLab2
             HSL[] HSL = new HSL[_map.Width * _map.Height];
             for (int x = 0; x < _map.Width; x++)
                 for (int y = 0; y < _map.Height; y++)
-                    HSL[x] = RGB2HSL(colors[x, y]);
+                    Console.WriteLine(RGB2HSL(colors[x, y]));
                 
         }
 
