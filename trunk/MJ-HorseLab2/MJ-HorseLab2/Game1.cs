@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -22,8 +22,10 @@ namespace MJ_HorseLab2
         Camera camera;
         Voxel voxel;
         Texture2D texture;
-
+        Texture2D map;
         BasicEffect effect;
+        Ground g;
+
 
         float moveScale = 12f;
         float rotateScale = MathHelper.PiOver2;
@@ -62,8 +64,15 @@ namespace MJ_HorseLab2
             test = Content.Load<Model>("test");
             texture = Content.Load<Texture2D>("elda");
             texture2 = Content.Load<Texture2D>("mud");
+            map = Content.Load<Texture2D>("map");
+            g = new Ground(map);
             voxel = new Voxel(this.GraphicsDevice, texture, texture2, this.effect);
         }
+
+
+        
+
+
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
