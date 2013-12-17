@@ -11,21 +11,33 @@ namespace MJ_HorseLab2
     class Ground
     {
         Texture2D _map;
+         Color[,] colors;
 
         public Ground(Texture2D map)
         {
             _map = map;
-            Color[,] colors = Texture2DArray();
-            HSL[] HSL = new HSL[_map.Width * _map.Height];
-            for (int x = 0; x < _map.Width; x++)
-                for (int y = 0; y < _map.Height; y++)
-                    Console.WriteLine(RGB2HSL(colors[x, y]));
-                
+            colors = Texture2DArray();
+            byte[,] chunkData = GetLost();
+        }
+
+        public byte[,] GetLost()
+        {
+            Console.WriteLine(_map.Width);
+            //byte[,,] chunkData = new byte[_map.Height,_map.Width,_map.Height*_map.Width];
+            byte[,] chunkData = new byte[_map.Width,_map.Height];
+            byte h;
+            for (int x = 0; x < _map.Width; x++){
+                for (int y = 0; y < _map.Height; y++){
+                    h = GetHeight(colors[x, y]);
+                    chunkData[x,y] = h;
+                    Console.WriteLine(h);
+                }
+            }
+            return chunkData;
         }
 
         public Color[,] Texture2DArray()
         {
-
             Color[] colors = new Color[_map.Width * _map.Height];
             _map.GetData(colors);
             Color[,] colors2D = new Color[_map.Width, _map.Height];
@@ -34,6 +46,12 @@ namespace MJ_HorseLab2
                 for (int y = 0; y < _map.Height; y++)
                     colors2D[x, y] = colors[x + y * _map.Width];
             return colors2D;
+        }
+
+
+        private byte GetHeight(Color c1)
+        {
+            return (byte)(RGB2HSL(c1).h / 12);
         }
 
         struct HSL

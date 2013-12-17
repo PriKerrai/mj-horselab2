@@ -20,7 +20,8 @@ namespace MJ_HorseLab2
         SpriteBatch spriteBatch;
         Model test;
         Camera camera;
-        Voxel voxel;
+        //Voxel voxel;
+        NewVoxel voxel;
         Texture2D texture;
         Texture2D map;
         BasicEffect effect;
@@ -46,7 +47,7 @@ namespace MJ_HorseLab2
         protected override void Initialize()
         {
             effect= new BasicEffect(GraphicsDevice);
-            camera = new Camera(new Vector3(-1, 0, -20), 0, MathHelper.PiOver4, 0.05f, 100f);
+            camera = new Camera(new Vector3(0, 1, -10), 0, MathHelper.PiOver4, 0.05f, 100f);
             effect.View = camera.View;
             effect.Projection = camera.projection;
             //effect.View = Matrix.Identity;
@@ -61,17 +62,15 @@ namespace MJ_HorseLab2
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            test = Content.Load<Model>("test");
-            texture = Content.Load<Texture2D>("elda");
-            texture2 = Content.Load<Texture2D>("mud");
-            map = Content.Load<Texture2D>("map");
+            //test = Content.Load<Model>("test");
+            //texture = Content.Load<Texture2D>("elda");
+            texture2 = Content.Load<Texture2D>("grass");
+            map = Content.Load<Texture2D>("sweden");
             g = new Ground(map);
-            voxel = new Voxel(this.GraphicsDevice, texture, texture2, this.effect);
+            voxel = new NewVoxel(this.GraphicsDevice, texture2);
+            //voxel = new Voxel(this.GraphicsDevice, texture, texture2, this.effect);
+
         }
-
-
-        
-
 
 
         /// <summary>
