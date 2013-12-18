@@ -28,6 +28,7 @@ namespace MJ_HorseLab2
         Texture2D map;
         BasicEffect effect;
         ReadHue hue;
+        Chunk chunk;
 
 
         float moveScale = 12f;
@@ -49,7 +50,7 @@ namespace MJ_HorseLab2
         protected override void Initialize()
         {
             effect= new BasicEffect(GraphicsDevice);
-            camera = new Camera(new Vector3(0, 1, -10), 0, MathHelper.PiOver4, 0.05f, 100f);
+            camera = new Camera(new Vector3(0, 10, -10), 0, MathHelper.PiOver4, 0.05f, 100f);
             effect.View = camera.View;
             effect.Projection = camera.projection;
             //effect.View = Matrix.Identity;
@@ -67,11 +68,12 @@ namespace MJ_HorseLab2
             //test = Content.Load<Model>("test");
             stoneTexture = Content.Load<Texture2D>("stone");
             dirtTexture = Content.Load<Texture2D>("dirt");
-            grassTexture = Content.Load<Texture2D>("grass");
+            grassTexture = Content.Load<Texture2D>("dot");
+
             map = Content.Load<Texture2D>("berg");
             hue = new ReadHue(map);
-            voxel = new NewVoxel(this.GraphicsDevice, texture2);
-            //voxel = new Voxel(this.GraphicsDevice, texture, texture2, this.effect);
+            //voxel = new NewVoxel(this.GraphicsDevice, texture);
+            chunk = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map);
 
         }
 
@@ -141,7 +143,8 @@ namespace MJ_HorseLab2
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                voxel.Draw(camera, effect);
+                //voxel.Draw(camera, effect);
+                chunk.Draw(camera, effect);
             }
 
             base.Draw(gameTime);

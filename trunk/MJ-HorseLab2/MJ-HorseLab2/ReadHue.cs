@@ -16,12 +16,12 @@ namespace MJ_HorseLab2
         const byte STONE = 1;
         const byte DIRT = 2;
         const byte GRASS = 3;
-
+        public byte[, ,] chunkData;
         public ReadHue(Texture2D map)
         {
             _map = map;
             _colors = Texture2DArray();
-            byte[,,] chunkData = GetChunkData();
+            chunkData = GetChunkData();
         }
 
         struct HSL
@@ -32,21 +32,21 @@ namespace MJ_HorseLab2
         private byte[,,] GetChunkData()
         {
             //byte[,,] chunkData = new byte[_map.Height,_map.Width,_map.Height*_map.Width];
-            byte[,,] chunkData = new byte[_map.Width,_map.Height, HEIGHT];
+            byte[, ,] chunkData = new byte[_map.Width, HEIGHT, _map.Height];
             byte height;
             for (int x = 0; x < _map.Width; x++){
-                for (int y = 0; y < _map.Height; y++){
-                    height = GetHeight(_colors[x, y]);
+                for (int z = 0; z < _map.Height; z++){
+                    height = GetHeight(_colors[x, z]);
                     //Console.WriteLine(height);
-                    for (int z = 0; z < HEIGHT; z++)
+                    for (int y = 0; y < HEIGHT; y++)
                     {
-                        if (z < height)
+                        if (y < height)
                         {
-                            if (z < 4)
+                            if (y < 2)
                                 chunkData[x, y, z] = STONE;
-                            else if (z < 8)
+                            else if (y < 6)
                                 chunkData[x, y, z] = DIRT;
-                            else if (z < 32)
+                            else if (y < 32)
                                 chunkData[x, y, z] = GRASS;
                         }
                     }
