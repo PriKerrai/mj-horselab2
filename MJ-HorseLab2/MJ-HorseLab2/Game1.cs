@@ -22,10 +22,12 @@ namespace MJ_HorseLab2
         Camera camera;
         //Voxel voxel;
         NewVoxel voxel;
-        Texture2D texture;
+        Texture2D stoneTexture;
+        Texture2D dirtTexture;
+        Texture2D grassTexture;
         Texture2D map;
         BasicEffect effect;
-        Ground g;
+        ReadHue hue;
 
 
         float moveScale = 12f;
@@ -63,10 +65,11 @@ namespace MJ_HorseLab2
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             //test = Content.Load<Model>("test");
-            //texture = Content.Load<Texture2D>("elda");
-            texture2 = Content.Load<Texture2D>("grass");
-            map = Content.Load<Texture2D>("sweden");
-            g = new Ground(map);
+            stoneTexture = Content.Load<Texture2D>("stone");
+            dirtTexture = Content.Load<Texture2D>("dirt");
+            grassTexture = Content.Load<Texture2D>("grass");
+            map = Content.Load<Texture2D>("berg");
+            hue = new ReadHue(map);
             voxel = new NewVoxel(this.GraphicsDevice, texture2);
             //voxel = new Voxel(this.GraphicsDevice, texture, texture2, this.effect);
 
