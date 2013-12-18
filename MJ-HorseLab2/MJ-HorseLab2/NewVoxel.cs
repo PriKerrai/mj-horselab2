@@ -96,8 +96,7 @@ namespace MJ_HorseLab2
             return vList;
 
         }
-
-
+             
         public List<VertexPositionTexture> BuildTexture()
         {
             Color color = Color.Red;
