@@ -8,31 +8,47 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MJ_HorseLab2
 {
-    class Ground
+    class ReadHue
     {
         Texture2D _map;
-         Color[,] colors;
+        Color[,] colors;
+        const int HEIGHT = 32;
+        const byte STONE = 1;
+        const byte DIRT = 2;
+        const byte GRASS = 3;
 
-        public Ground(Texture2D map)
+        public ReadHue(Texture2D map)
         {
             _map = map;
             colors = Texture2DArray();
-            byte[,] chunkData = GetLost();
+            byte[,,] chunkData = GetChunkData();
         }
 
-        public byte[,] GetLost()
+        public byte[,,] GetChunkData()
         {
-            Console.WriteLine(_map.Width);
             //byte[,,] chunkData = new byte[_map.Height,_map.Width,_map.Height*_map.Width];
-            byte[,] chunkData = new byte[_map.Width,_map.Height];
-            byte h;
+            byte[,,] chunkData = new byte[_map.Width,_map.Height, HEIGHT];
+            byte height;
             for (int x = 0; x < _map.Width; x++){
                 for (int y = 0; y < _map.Height; y++){
-                    h = GetHeight(colors[x, y]);
-                    chunkData[x,y] = h;
-                    Console.WriteLine(h);
+                    height = GetHeight(colors[x, y]);
+                    //Console.WriteLine(height);
+                    for (int z = 0; z < HEIGHT; z++)
+                    {
+                        if (z < height)
+                        {
+                            if (z < 4)
+                                chunkData[x, y, z] = STONE;
+                            else if (z < 8)
+                                chunkData[x, y, z] = DIRT;
+                            else if (z < 32)
+                                chunkData[x, y, z] = GRASS;
+                        }
+                    }
+
                 }
             }
+
             return chunkData;
         }
 
@@ -47,7 +63,6 @@ namespace MJ_HorseLab2
                     colors2D[x, y] = colors[x + y * _map.Width];
             return colors2D;
         }
-
 
         private byte GetHeight(Color c1)
         {

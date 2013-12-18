@@ -109,7 +109,7 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="Chunk.cs" />
-    <Compile Include="Ground.cs" />
+    <Compile Include="ReadHue.cs" />
     <Compile Include="NewVoxel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
