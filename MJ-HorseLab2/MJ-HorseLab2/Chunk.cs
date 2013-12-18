@@ -9,7 +9,6 @@ namespace MJ_HorseLab2
 {
     class Chunk
     {
-
         const int chunkWidth = 16;
         const int chunkDepth = 16;
         const int chunkHeight = 32;
@@ -18,12 +17,25 @@ namespace MJ_HorseLab2
         const byte DIRT = 2;
         const byte GRASS = 3;
 
-
+        Texture2D _stoneTexture;
+        Texture2D _dirtTexture;
+        Texture2D _grassTexture;
+        
         //byte[,,] chunkData = huehuehue;
         List<VertexPositionTexture> stoneVertices = new List<VertexPositionTexture>();
         List<VertexPositionTexture> grassVertices = new List<VertexPositionTexture>();
         List<VertexPositionTexture> dirtVertices = new List<VertexPositionTexture>();
-        /*
+
+        public Chunk(Texture2D stoneTexture, Texture2D dirtTexture, Texture2D grassTexture)
+        {
+            _stoneTexture = stoneTexture;
+            _dirtTexture = dirtTexture;
+            _grassTexture = grassTexture;
+            Init();
+
+
+        }
+
         public void Init()
         {
             for (int x = 0; x < chunkWidth; x++)
@@ -172,6 +184,24 @@ namespace MJ_HorseLab2
 
                         }
         }
-        */
+        
+
+
+        public void Draw(Camera camera, BasicEffect effect)
+        {
+            effect.VertexColorEnabled = false;
+            effect.TextureEnabled = true;
+
+            effect.Texture = texture2;
+            Matrix center = Matrix.CreateTranslation(new Vector3(-0.5f, -0.5f, -0.5f));
+            //Matrix translate = Matrix.CreateTranslation(location);
+            effect.View = camera.View;
+            effect.Projection = camera.projection;
+            effect.CurrentTechnique.Passes[0].Apply();
+
+            device.SetVertexBuffer(buffer);
+            device.DrawPrimitives(PrimitiveType.TriangleList, 0, buffer.VertexCount / 3);
+        }
+
     }
 }

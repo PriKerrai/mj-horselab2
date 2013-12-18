@@ -11,7 +11,7 @@ namespace MJ_HorseLab2
     class ReadHue
     {
         Texture2D _map;
-        Color[,] colors;
+        Color[,] _colors;
         const int HEIGHT = 32;
         const byte STONE = 1;
         const byte DIRT = 2;
@@ -20,18 +20,23 @@ namespace MJ_HorseLab2
         public ReadHue(Texture2D map)
         {
             _map = map;
-            colors = Texture2DArray();
+            _colors = Texture2DArray();
             byte[,,] chunkData = GetChunkData();
         }
 
-        public byte[,,] GetChunkData()
+        struct HSL
+        {
+            public double h, s, l;
+        }
+
+        private byte[,,] GetChunkData()
         {
             //byte[,,] chunkData = new byte[_map.Height,_map.Width,_map.Height*_map.Width];
             byte[,,] chunkData = new byte[_map.Width,_map.Height, HEIGHT];
             byte height;
             for (int x = 0; x < _map.Width; x++){
                 for (int y = 0; y < _map.Height; y++){
-                    height = GetHeight(colors[x, y]);
+                    height = GetHeight(_colors[x, y]);
                     //Console.WriteLine(height);
                     for (int z = 0; z < HEIGHT; z++)
                     {
@@ -52,7 +57,7 @@ namespace MJ_HorseLab2
             return chunkData;
         }
 
-        public Color[,] Texture2DArray()
+        private Color[,] Texture2DArray()
         {
             Color[] colors = new Color[_map.Width * _map.Height];
             _map.GetData(colors);
@@ -67,11 +72,6 @@ namespace MJ_HorseLab2
         private byte GetHeight(Color c1)
         {
             return (byte)(RGB2HSL(c1).h / 12);
-        }
-
-        struct HSL
-        {
-            public double h, s, l;
         }
 
         private HSL RGB2HSL(Color c1)
