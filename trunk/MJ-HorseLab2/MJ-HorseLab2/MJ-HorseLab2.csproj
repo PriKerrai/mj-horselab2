@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="Chunk.cs" />
+    <Compile Include="Controller.cs" />
     <Compile Include="ReadHue.cs" />
     <Compile Include="NewVoxel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

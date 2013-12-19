@@ -28,17 +28,25 @@ namespace MJ_HorseLab2
         Texture2D map;
         BasicEffect effect;
         ReadHue hue;
-        Chunk chunk;
+        Chunk chunk, chunk1, chunk2, chunk3, chunk4, chunk5, chunk6, chunk7;
 
 
         float moveScale = 12f;
         float rotateScale = MathHelper.PiOver2;
         private Texture2D texture2;
 
+        float framecount = 0;
+        float timeSinceLastUpdate = 0;
+        float updateInterval = 1;
+        float fps = 0;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            IsFixedTimeStep = false;
+            graphics.SynchronizeWithVerticalRetrace = false;
         }
 
         /// <summary>
@@ -68,12 +76,24 @@ namespace MJ_HorseLab2
             //test = Content.Load<Model>("test");
             stoneTexture = Content.Load<Texture2D>("stone");
             dirtTexture = Content.Load<Texture2D>("dirt");
-            grassTexture = Content.Load<Texture2D>("dot");
-
+            grassTexture = Content.Load<Texture2D>("grass");
             map = Content.Load<Texture2D>("berg");
+
+
+            Controller controller = new Controller(this);
+
+
             hue = new ReadHue(map);
             //voxel = new NewVoxel(this.GraphicsDevice, texture);
-            chunk = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map);
+
+            chunk = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 0);
+            chunk1 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 1);
+            chunk2 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 2);
+            chunk3 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 3);
+            chunk4 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 4);
+            chunk5 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 5);
+            chunk6 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 6);
+            chunk7 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 7);
 
         }
 
@@ -97,7 +117,7 @@ namespace MJ_HorseLab2
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-
+             countFPS(gameTime);
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             KeyboardState keyState = Keyboard.GetState();
             float moveAmount = 0;
@@ -145,11 +165,32 @@ namespace MJ_HorseLab2
                 pass.Apply();
                 //voxel.Draw(camera, effect);
                 chunk.Draw(camera, effect);
+                chunk1.Draw(camera, effect);
+                chunk2.Draw(camera, effect);
+                chunk3.Draw(camera, effect);
+                chunk4.Draw(camera, effect);
+                chunk5.Draw(camera, effect);
+                chunk6.Draw(camera, effect);
+                chunk7.Draw(camera, effect);
             }
 
             base.Draw(gameTime);
         }
-
+        //FPS counter
+        private void countFPS(GameTime time)
+        {
+            float elapsed = (float)time.ElapsedGameTime.TotalSeconds;
+            framecount++;
+            timeSinceLastUpdate+= elapsed;
+            if (timeSinceLastUpdate> updateInterval)
+            {
+                fps = framecount/ timeSinceLastUpdate;
+                Window.Title= "FPS: " + fps.ToString();
+                framecount= 0;
+                timeSinceLastUpdate-= updateInterval;
+                }
+        }
+    
         //private void DrawModel(Model m)
         //{
 
