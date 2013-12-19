@@ -37,7 +37,6 @@ namespace MJ_HorseLab2
             for (int x = 0; x < _map.Width; x++){
                 for (int z = 0; z < _map.Height; z++){
                     height = GetHeight(_colors[x, z]);
-                    //Console.WriteLine(height);
                     for (int y = 0; y < HEIGHT; y++)
                     {
                         if (y < height)
