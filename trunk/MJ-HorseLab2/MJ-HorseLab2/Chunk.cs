@@ -16,6 +16,7 @@ namespace MJ_HorseLab2
         const byte STONE = 1;
         const byte DIRT = 2;
         const byte GRASS = 3;
+        const byte EMPTY = 4;
 
         Texture2D _stoneTexture;
         Texture2D _dirtTexture;
@@ -45,14 +46,17 @@ namespace MJ_HorseLab2
 
             Init(number);
 
+            
             _stoneBuffer = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, stoneVertices.Count, BufferUsage.WriteOnly);
             _stoneBuffer.SetData<VertexPositionTexture>(stoneVertices.ToArray());
             
             _dirtBuffer = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, dirtVertices.Count, BufferUsage.WriteOnly);
             _dirtBuffer.SetData<VertexPositionTexture>(dirtVertices.ToArray());
-            
-            _grassBuffer = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, grassVertices.Count, BufferUsage.WriteOnly);
-            _grassBuffer.SetData<VertexPositionTexture>(grassVertices.ToArray());
+            if (grassVertices.Count > 0)
+            {
+                _grassBuffer = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, grassVertices.Count, BufferUsage.WriteOnly);
+                _grassBuffer.SetData<VertexPositionTexture>(grassVertices.ToArray());
+            }
         }
 
 
@@ -222,6 +226,8 @@ namespace MJ_HorseLab2
                                 grassVertices.Add(new VertexPositionTexture(new Vector3(x, y, z) + BOTTOM_FACE_POS[1], BOTTOM_FACE_TEXCOORD[1]));
                                 #endregion
                                 break;
+                            case EMPTY:
+                                break;
 
                         }
                     }
@@ -237,7 +243,10 @@ namespace MJ_HorseLab2
             effect.TextureEnabled = true;
             DrawStone(camera, effect);
             DrawDirt(camera, effect);
-            DrawGrass(camera, effect);
+            if (grassVertices.Count > 0)
+            {
+                DrawGrass(camera, effect);
+            }
         }
 
         private void DrawStone(Camera camera, BasicEffect effect)
@@ -245,8 +254,8 @@ namespace MJ_HorseLab2
             effect.Texture = _stoneTexture;
             Matrix center = Matrix.CreateTranslation(new Vector3(-0.5f, -0.5f, -0.5f));
             //Matrix translate = Matrix.CreateTranslation(location);
-            effect.View = camera.View;
-            effect.Projection = camera.projection;
+            effect.View = camera.ViewMatrix;
+            effect.Projection = camera.ProjectionMatrix;
             effect.CurrentTechnique.Passes[0].Apply();
 
             _device.SetVertexBuffer(_stoneBuffer);
@@ -258,8 +267,8 @@ namespace MJ_HorseLab2
             effect.Texture = _dirtTexture;
             Matrix center = Matrix.CreateTranslation(new Vector3(-0.5f, -0.5f, -0.5f));
             //Matrix translate = Matrix.CreateTranslation(location);
-            effect.View = camera.View;
-            effect.Projection = camera.projection;
+            effect.View = camera.ViewMatrix;
+            effect.Projection = camera.ProjectionMatrix;
             effect.CurrentTechnique.Passes[0].Apply();
 
             _device.SetVertexBuffer(_dirtBuffer);
@@ -270,8 +279,8 @@ namespace MJ_HorseLab2
             effect.Texture = _grassTexture;
             Matrix center = Matrix.CreateTranslation(new Vector3(-0.5f, -0.5f, -0.5f));
             //Matrix translate = Matrix.CreateTranslation(location);
-            effect.View = camera.View;
-            effect.Projection = camera.projection;
+            effect.View = camera.ViewMatrix;
+            effect.Projection = camera.ProjectionMatrix;
             effect.CurrentTechnique.Passes[0].Apply();
 
             _device.SetVertexBuffer(_grassBuffer);

@@ -16,6 +16,7 @@ namespace MJ_HorseLab2
         const byte STONE = 1;
         const byte DIRT = 2;
         const byte GRASS = 3;
+        const byte EMPTY = 4;
         public byte[, ,] chunkData;
         public ReadHue(Texture2D map)
         {
@@ -41,12 +42,14 @@ namespace MJ_HorseLab2
                     {
                         if (y < height)
                         {
-                            if (y < 2)
+                            if (y < 4)
                                 chunkData[x, y, z] = STONE;
-                            else if (y < 6)
+                            else if (y < 8)
                                 chunkData[x, y, z] = DIRT;
-                            else if (y < 32)
+                            else if (y < 12)
                                 chunkData[x, y, z] = GRASS;
+                            else
+                                chunkData[x, y, z] = EMPTY;
                         }
                     }
 
