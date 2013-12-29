@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Laboration3Datorgrafik;
 
 namespace MJ_HorseLab2
 {
@@ -20,6 +21,7 @@ namespace MJ_HorseLab2
         SpriteBatch spriteBatch;
         Model test;
         Camera camera;
+        FlyingCamera fCamera;
         //Voxel voxel;
         NewVoxel voxel;
         Texture2D stoneTexture;
@@ -57,11 +59,11 @@ namespace MJ_HorseLab2
         /// </summary>
         protected override void Initialize()
         {
-            effect= new BasicEffect(GraphicsDevice);
-            camera = new Camera(new Vector3(0, 10, -10), 0, MathHelper.PiOver4, 0.05f, 100f);
-            effect.View = camera.View;
-            effect.Projection = camera.projection;
-            //effect.View = Matrix.Identity;
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.IsFullScreen = false;
+            graphics.ApplyChanges();
+            Window.Title = "Datorgrafik Lab 3";
 
             base.Initialize();
         }
@@ -78,7 +80,7 @@ namespace MJ_HorseLab2
             dirtTexture = Content.Load<Texture2D>("dirt");
             grassTexture = Content.Load<Texture2D>("grass");
             map = Content.Load<Texture2D>("berg");
-
+            effect = new BasicEffect(GraphicsDevice);
 
             Controller controller = new Controller(this);
 
@@ -94,7 +96,9 @@ namespace MJ_HorseLab2
             chunk5 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 5);
             chunk6 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 6);
             chunk7 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 7);
-
+            
+            fCamera = new FlyingCamera();
+            this.camera = new Camera(GraphicsDevice, new Vector3(0, 12, 5));
         }
 
 
@@ -118,36 +122,9 @@ namespace MJ_HorseLab2
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
              countFPS(gameTime);
-            float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            KeyboardState keyState = Keyboard.GetState();
-            float moveAmount = 0;
 
-            if (keyState.IsKeyDown(Keys.Right))
-            {
-                camera.Rotation = MathHelper.WrapAngle(camera.Rotation - (rotateScale * elapsed));
-            }
-            if (keyState.IsKeyDown(Keys.Left))
-            {
-                camera.Rotation = MathHelper.WrapAngle(camera.Rotation + (rotateScale * elapsed));
-            }
-            if (keyState.IsKeyDown(Keys.Up))
-            {
-                moveAmount = moveScale * elapsed;
-            }
-            if (keyState.IsKeyDown(Keys.Down))
-            {
-                moveAmount = -moveScale * elapsed;
-            }
-
-            if (moveAmount != 0)
-            {
-                Vector3 newLocation = camera.PreviewMove(moveAmount);
-                bool moveOk = true;
-
-                if (moveOk)
-                    camera.MoveForward(moveAmount);
-            }
-            // TODO: Add your update logic here
+             fCamera.ProcessInput(gameTime);
+             camera.Update(fCamera.Position, fCamera.Rotation);
 
             base.Update(gameTime);
         }

@@ -74,8 +74,8 @@ namespace MJ_HorseLab2
             effect.Texture = texture2;
             Matrix center = Matrix.CreateTranslation(new Vector3(-0.5f, -0.5f, -0.5f));
             Matrix translate = Matrix.CreateTranslation(location);
-            effect.View = camera.View;
-            effect.Projection = camera.projection;
+            effect.View = camera.ViewMatrix;
+            effect.Projection = camera.ProjectionMatrix;
             effect.CurrentTechnique.Passes[0].Apply();
 
             device.SetVertexBuffer(voxelBuffer);
