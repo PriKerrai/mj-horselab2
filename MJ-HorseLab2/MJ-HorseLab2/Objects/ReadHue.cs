@@ -18,11 +18,13 @@ namespace MJ_HorseLab2
         const byte GRASS = 3;
         const byte EMPTY = 4;
         public byte[, ,] chunkData;
+
+        public List<Tuple<int, int>> spatialData;
+
         public ReadHue(Texture2D map)
         {
             _map = map;
             _colors = Texture2DArray();
-            chunkData = GetChunkData();
         }
 
         struct HSL
@@ -30,33 +32,65 @@ namespace MJ_HorseLab2
             public double h, s, l;
         }
 
-        private byte[,,] GetChunkData()
-        {
-            //byte[,,] chunkData = new byte[_map.Height,_map.Width,_map.Height*_map.Width];
-            byte[, ,] chunkData = new byte[_map.Width, HEIGHT, _map.Height];
-            byte height;
-            for (int x = 0; x < _map.Width; x++){
-                for (int z = 0; z < _map.Height; z++){
-                    height = GetHeight(_colors[x, z]);
-                    for (int y = 0; y < HEIGHT; y++)
-                    {
-                        if (y < height)
-                        {
-                            if (y < 4)
-                                chunkData[x, y, z] = STONE;
-                            else if (y < 8)
-                                chunkData[x, y, z] = DIRT;
-                            else if (y < 12)
-                                chunkData[x, y, z] = GRASS;
-                            else
-                                chunkData[x, y, z] = EMPTY;
-                        }
-                    }
+        private void GetChunkData()
+        {            
+            int chunksX = 16;
+            int chunksZ = 16;
 
+            int ChunkX = _map.Width/chunksX;
+            int ChunkZ = _map.Height/chunksZ;
+
+            spatialData = new List<Tuple<int, int>>();
+
+            for (int x = 0; x < ChunkX; x++)
+            {
+                for (int z = 0; z < ChunkZ; z++)
+                {
+                    List<Tuple<int, int, int>> heightData = new List<Tuple<int, int, int>>();
+                    
+                    for (int tempX = 0; tempX < chunksX; tempX++)
+                    {
+                        for (int tempZ = 0; tempZ < chunksZ; tempZ++)
+                        {
+                            int mapX = (x * chunksX + tempX);
+                            int mapZ = (ushort)(z * chunksZ + tempZ);
+
+                            byte height = GetHeight(_colors[mapX, mapZ]);
+                            
+                            heightData.Add(new Tuple<int, int, int>(tempX, height, tempZ));
+                         }
+                    }
+                    spatialData.Add(new Tuple<int, int>(x, z));
                 }
             }
 
-            return chunkData;
+
+
+            ////byte[,,] chunkData = new byte[_map.Height,_map.Width,_map.Height*_map.Width];
+            //byte[, ,] chunkData = new byte[_map.Width, HEIGHT, _map.Height];
+            //byte height;
+            //for (int x = 0; x < _map.Width; x++){
+            //    for (int z = 0; z < _map.Height; z++){
+            //        height = GetHeight(_colors[x, z]);
+            //        for (int y = 0; y < HEIGHT; y++)
+            //        {
+            //            if (y < height)
+            //            {
+            //                if (y < 4)
+            //                    chunkData[x, y, z] = STONE;
+            //                else if (y < 8)
+            //                    chunkData[x, y, z] = DIRT;
+            //                else if (y < 12)
+            //                    chunkData[x, y, z] = GRASS;
+            //                else
+            //                    chunkData[x, y, z] = EMPTY;
+            //            }
+            //        }
+
+            //    }
+            //}
+
+            //return chunkData;
         }
 
         private Color[,] Texture2DArray()
