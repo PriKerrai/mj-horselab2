@@ -75,21 +75,15 @@ namespace MJ_HorseLab2
             //test = Content.Load<Model>("test");
             stoneTexture = Content.Load<Texture2D>("stone");
             dirtTexture = Content.Load<Texture2D>("dirt");
-            grassTexture = Content.Load<Texture2D>("grass");
+            grassTexture = Content.Load<Texture2D>("dot");
             map = Content.Load<Texture2D>("berg");
             effect = new BasicEffect(GraphicsDevice);
 
-            hue = new ReadHue(map);
+            //hue = new ReadHue(map);
+            hue = new ReadHue(map, this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture);
             //voxel = new NewVoxel(this.GraphicsDevice, texture);
 
-            chunk = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 0);
-            chunk1 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 1);
-            chunk2 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 2);
-            chunk3 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 3);
-            chunk4 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 4);
-            chunk5 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 5);
-            chunk6 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 6);
-            chunk7 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 7);
+            
 
             tank = new Tank();
             tank.Load(Content);
@@ -139,14 +133,10 @@ namespace MJ_HorseLab2
             {
                 pass.Apply();
                 //voxel.Draw(camera, effect);
-                chunk.Draw(camera, effect);
-                chunk1.Draw(camera, effect);
-                chunk2.Draw(camera, effect);
-                chunk3.Draw(camera, effect);
-                chunk4.Draw(camera, effect);
-                chunk5.Draw(camera, effect);
-                chunk6.Draw(camera, effect);
-                chunk7.Draw(camera, effect);
+                foreach(Chunk chunk in hue.ChunkList){
+                    chunk.Draw(camera, effect);
+                }
+                
                 tank.Draw(effect.World, camera.ViewMatrix, camera.ProjectionMatrix);
             }
 
