@@ -10,7 +10,7 @@ namespace Laboration3Datorgrafik {
         public Vector3 Position { get; set; }
         public Quaternion Rotation { get; set; }
 
-        private float MoveSpeed = 0.5f;
+        private float MoveSpeed = 1f;
 
         public FlyingCamera() {
             this.Position = new Vector3(15,10,5);
@@ -40,9 +40,9 @@ namespace Laboration3Datorgrafik {
                 leftRightRot -= turningSpeed;
 
             float upDownRot = 0;
-            if (keys.IsKeyDown(Keys.R))
-                upDownRot += turningSpeed;
             if (keys.IsKeyDown(Keys.F))
+                upDownRot += turningSpeed;
+            if (keys.IsKeyDown(Keys.R))
                 upDownRot -= turningSpeed;
 
             float speed = 0;
