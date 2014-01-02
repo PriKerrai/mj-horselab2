@@ -24,6 +24,10 @@ namespace MJ_HorseLab2.Models
         ModelBone rightFrontWheelBone;
         ModelBone leftSteerBone;
         ModelBone rightSteerBone;
+        ModelBone turretBone;
+        ModelBone cannonBone;
+        ModelBone hatchBone;
+
 
         Matrix leftBackWheelTransform;
         Matrix rightBackWheelTransform;
@@ -31,11 +35,18 @@ namespace MJ_HorseLab2.Models
         Matrix rightFrontWheelTransform;
         Matrix leftSteerTransform;
         Matrix rightSteerTransform;
+        Matrix turretTransform;
+        Matrix cannonTransform;
+        Matrix hatchTransform;
+
 
         Matrix[] boneTransforms;
 
         float wheelRotationValue;
         float steerRotationValue;
+        float turretRotationValue;
+        float cannonRotationValue;
+        float hatchRotationValue;
 
         public Vector3 Position;
         public Quaternion Rotation;
@@ -61,15 +72,39 @@ namespace MJ_HorseLab2.Models
             set { steerRotationValue = value; }
         }
 
+        public float TurretRotation
+        {
+            get { return turretRotationValue; }
+            set { turretRotationValue = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the cannon rotation amount.
+        /// </summary>
+        public float CannonRotation
+        {
+            get { return cannonRotationValue; }
+            set { cannonRotationValue = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the entry hatch rotation amount.
+        /// </summary>
+        public float HatchRotation
+        {
+            get { return hatchRotationValue; }
+            set { hatchRotationValue = value; }
+        }
+
 
         #endregion
 
         public Tank()
         {
-            Position = new Vector3(0, 16, 0);
+            Position = new Vector3(15, 7, 20);
 
             Scale = 0.01f;
-            MoveSpeed = 0.1f;
+            MoveSpeed = 0.01f;
             Rotation = Quaternion.Identity;
         }
 
@@ -88,6 +123,10 @@ namespace MJ_HorseLab2.Models
             rightFrontWheelBone = tankModel.Bones["r_front_wheel_geo"];
             leftSteerBone = tankModel.Bones["l_steer_geo"];
             rightSteerBone = tankModel.Bones["r_steer_geo"];
+            turretBone = tankModel.Bones["turret_geo"];
+            cannonBone = tankModel.Bones["canon_geo"];
+            hatchBone = tankModel.Bones["hatch_geo"];
+
 
             // Store the original transform matrix for each animating bone.
             leftBackWheelTransform = leftBackWheelBone.Transform;
@@ -96,6 +135,10 @@ namespace MJ_HorseLab2.Models
             rightFrontWheelTransform = rightFrontWheelBone.Transform;
             leftSteerTransform = leftSteerBone.Transform;
             rightSteerTransform = rightSteerBone.Transform;
+            turretTransform = turretBone.Transform;
+            cannonTransform = cannonBone.Transform;
+            hatchTransform = hatchBone.Transform;
+
 
             // Allocate the transform matrix array.
             boneTransforms = new Matrix[tankModel.Bones.Count];
@@ -117,18 +160,18 @@ namespace MJ_HorseLab2.Models
             keys = Keyboard.GetState();
 
             float turningSpeed = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0f;
-            turningSpeed *= 1.6f * 1.5f;
+            turningSpeed *= 1.6f * 0.5f;
             leftRightRot = 0;
 
             if (keys.IsKeyDown(Keys.Up))
             {
                 Move(-Matrix.CreateFromQuaternion(Rotation).Forward);
-                Rotatewheels(0.1f);
+                Rotatewheels(0.01f);
             }
             if (keys.IsKeyDown(Keys.Down))
             {
                 Move(Matrix.CreateFromQuaternion(Rotation).Forward);
-                Rotatewheels(-0.1f);
+                Rotatewheels(-0.01f);
             }
             if (keys.IsKeyDown(Keys.Left))
             {
@@ -144,6 +187,32 @@ namespace MJ_HorseLab2.Models
             {
                 SteerRotation = 0;
             }
+            if (keys.IsKeyDown(Keys.NumPad0))
+            {
+                TurretRotation += turningSpeed;
+            }
+            if (keys.IsKeyDown(Keys.NumPad1))
+            {
+                TurretRotation -= turningSpeed;
+            }
+            if (keys.IsKeyDown(Keys.NumPad2))
+            {
+                CannonRotation += turningSpeed;
+            }
+            if (keys.IsKeyDown(Keys.NumPad3))
+            {
+                CannonRotation -= turningSpeed;
+            }
+
+            if (keys.IsKeyDown(Keys.NumPad4))
+            {
+                HatchRotation += turningSpeed;
+            }
+            if (keys.IsKeyDown(Keys.NumPad5))
+            {
+                HatchRotation -= turningSpeed;
+            }
+
 
             Quaternion changeInRotation = Quaternion.CreateFromAxisAngle(new Vector3(0, 1, 0), leftRightRot)
                                        * Quaternion.CreateFromAxisAngle(new Vector3(1, 0, 0), 0)
@@ -151,9 +220,7 @@ namespace MJ_HorseLab2.Models
 
             Rotation *= changeInRotation;
         }
-        /// <summary>
-        /// Draws the tank model, using the current animation settings.
-        /// </summary>
+
         public void Draw(Matrix world, Matrix view, Matrix projection)
         {
             // Set the world matrix as the root transform of the model.
@@ -162,6 +229,9 @@ namespace MJ_HorseLab2.Models
             // Calculate matrices based on the current animation position.
             Matrix wheelRotation = Matrix.CreateRotationX(wheelRotationValue);
             Matrix steerRotation = Matrix.CreateRotationY(steerRotationValue);
+            Matrix turretRotation = Matrix.CreateRotationY(turretRotationValue);
+            Matrix cannonRotation = Matrix.CreateRotationX(cannonRotationValue);
+            Matrix hatchRotation = Matrix.CreateRotationX(hatchRotationValue);
 
             // Apply matrices to the relevant bones.
             leftBackWheelBone.Transform = wheelRotation * leftBackWheelTransform;
@@ -170,6 +240,10 @@ namespace MJ_HorseLab2.Models
             rightFrontWheelBone.Transform = wheelRotation * rightFrontWheelTransform;
             leftSteerBone.Transform = steerRotation * leftSteerTransform;
             rightSteerBone.Transform = steerRotation * rightSteerTransform;
+            turretBone.Transform = turretRotation * turretTransform;
+            cannonBone.Transform = cannonRotation * cannonTransform;
+            hatchBone.Transform = hatchRotation * hatchTransform;
+
 
             // Look up combined bone matrices for the entire model.
             tankModel.CopyAbsoluteBoneTransformsTo(boneTransforms);

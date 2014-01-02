@@ -20,11 +20,9 @@ namespace MJ_HorseLab2
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Model test;
         Camera camera;
         FlyingCamera fCamera;
-        //Voxel voxel;
-        NewVoxel voxel;
+        Voxel voxel;
         Texture2D stoneTexture;
         Texture2D dirtTexture;
         Texture2D grassTexture;
@@ -32,11 +30,6 @@ namespace MJ_HorseLab2
         BasicEffect effect;
         ReadHue hue;
         Chunk chunk, chunk1, chunk2, chunk3, chunk4, chunk5, chunk6, chunk7;
-
-
-        float moveScale = 12f;
-        float rotateScale = MathHelper.PiOver2;
-        private Texture2D texture2;
 
         float framecount = 0;
         float timeSinceLastUpdate = 0;
@@ -124,11 +117,11 @@ namespace MJ_HorseLab2
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-             countFPS(gameTime);
+            countFPS(gameTime);
 
-             tank.ProcessInput(gameTime);
-             fCamera.ProcessInput(gameTime);
-             camera.Update(fCamera.Position, fCamera.Rotation);
+            tank.ProcessInput(gameTime);
+            fCamera.ProcessInput(gameTime);
+            camera.Update(fCamera.Position, fCamera.Rotation);
 
             base.Update(gameTime);
         }
@@ -163,35 +156,15 @@ namespace MJ_HorseLab2
         {
             float elapsed = (float)time.ElapsedGameTime.TotalSeconds;
             framecount++;
-            timeSinceLastUpdate+= elapsed;
-            if (timeSinceLastUpdate> updateInterval)
+            timeSinceLastUpdate += elapsed;
+            if (timeSinceLastUpdate > updateInterval)
             {
-                fps = framecount/ timeSinceLastUpdate;
-                Window.Title= "FPS: " + fps.ToString();
-                framecount= 0;
-                timeSinceLastUpdate-= updateInterval;
-                }
+                fps = framecount / timeSinceLastUpdate;
+                Window.Title = "FPS: " + fps.ToString();
+                framecount = 0;
+                timeSinceLastUpdate -= updateInterval;
+            }
         }
-    
-        //private void DrawModel(Model m)
-        //{
-
-        //    Matrix[] transforms = new Matrix[m.Bones.Count];
-        //    m.CopyAbsoluteBoneTransformsTo(transforms);
-        //    Matrix projection = camera.projection;
-
-        //    foreach (ModelMesh mesh in m.Meshes)
-        //    {
-        //        foreach (BasicEffect effect in mesh.Effects)
-        //        {
-        //            effect.EnableDefaultLighting();
-        //            effect.View = camera.View;
-        //            effect.Projection = projection;
-        //            effect.World = transforms[mesh.ParentBone.Index]; //Position //gameWorldRotation * 
-        //        }
-        //        mesh.Draw();
-        //    }
-        //}
 
     }
 }
