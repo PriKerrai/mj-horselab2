@@ -27,7 +27,7 @@ namespace MJ_HorseLab2
         VertexBuffer _dirtBuffer;
 
         GraphicsDevice _device;
-        
+
         byte[,,] chunkData;
         List<VertexPositionTexture> stoneVertices = new List<VertexPositionTexture>();
         List<VertexPositionTexture> grassVertices = new List<VertexPositionTexture>();
