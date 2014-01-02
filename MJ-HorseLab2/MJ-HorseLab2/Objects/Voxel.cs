@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MJ_HorseLab2
 {
-    class NewVoxel
+    class Voxel
     {
 
         Vector3[] LEFT_FACE_POS = { new Vector3(1, 0, 0), new Vector3(1, 1, 0), new Vector3(1, 0, 1), new Vector3(1, 1, 1) };
@@ -29,7 +29,7 @@ namespace MJ_HorseLab2
         Texture2D texture2;
 
 
-        public NewVoxel(GraphicsDevice device, Texture2D texture2)
+        public Voxel(GraphicsDevice device, Texture2D texture2)
         {
             this.device = device;
             this.texture2 = texture2;
