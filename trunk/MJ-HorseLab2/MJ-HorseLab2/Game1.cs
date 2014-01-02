@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Laboration3Datorgrafik;
+using MJ_HorseLab2.Models;
 
 namespace MJ_HorseLab2
 {
@@ -41,6 +42,8 @@ namespace MJ_HorseLab2
         float timeSinceLastUpdate = 0;
         float updateInterval = 1;
         float fps = 0;
+
+        Tank tank;
 
         public Game1()
         {
@@ -82,9 +85,6 @@ namespace MJ_HorseLab2
             map = Content.Load<Texture2D>("berg");
             effect = new BasicEffect(GraphicsDevice);
 
-            Controller controller = new Controller(this);
-
-
             hue = new ReadHue(map);
             //voxel = new NewVoxel(this.GraphicsDevice, texture);
 
@@ -96,7 +96,10 @@ namespace MJ_HorseLab2
             chunk5 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 5);
             chunk6 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 6);
             chunk7 = new Chunk(this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture, map, 7);
-            
+
+            tank = new Tank();
+            tank.Load(Content);
+
             fCamera = new FlyingCamera();
             this.camera = new Camera(GraphicsDevice, new Vector3(0, 12, 5));
         }
@@ -123,6 +126,7 @@ namespace MJ_HorseLab2
                 this.Exit();
              countFPS(gameTime);
 
+             tank.ProcessInput(gameTime);
              fCamera.ProcessInput(gameTime);
              camera.Update(fCamera.Position, fCamera.Rotation);
 
@@ -149,6 +153,7 @@ namespace MJ_HorseLab2
                 chunk5.Draw(camera, effect);
                 chunk6.Draw(camera, effect);
                 chunk7.Draw(camera, effect);
+                tank.Draw(effect.World, camera.ViewMatrix, camera.ProjectionMatrix);
             }
 
             base.Draw(gameTime);
