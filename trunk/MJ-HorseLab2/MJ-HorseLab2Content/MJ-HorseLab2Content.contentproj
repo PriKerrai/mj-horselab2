@@ -100,7 +100,6 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Compile Include="Models\Tank\engine_diff_tex.tga">
       <Name>engine_diff_tex</Name>
@@ -128,6 +127,13 @@
   <ItemGroup>
     <Compile Include="Models\Ant\texture.jpg">
       <Name>texture</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="prick.png">
+      <Name>prick</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -77,6 +77,7 @@ namespace MJ_HorseLab2
             dirtTexture = Content.Load<Texture2D>("dirt");
             grassTexture = Content.Load<Texture2D>("grass");
             map = Content.Load<Texture2D>("berg");
+            //map = Content.Load<Texture2D>("prick");
             effect = new BasicEffect(GraphicsDevice);
 
             //hue = new ReadHue(map);
