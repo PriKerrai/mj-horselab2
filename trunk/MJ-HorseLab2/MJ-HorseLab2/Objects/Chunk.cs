@@ -18,6 +18,9 @@ namespace MJ_HorseLab2
         const byte GRASS = 3;
         const byte EMPTY = 4;
 
+        private int _xPos;
+        private int _zPos;
+
         Texture2D _stoneTexture;
         Texture2D _dirtTexture;
         Texture2D _grassTexture;
@@ -39,6 +42,8 @@ namespace MJ_HorseLab2
             _dirtTexture = dirtTexture;
             _grassTexture = grassTexture;
             _device = device;
+            _xPos = xPos;
+            _zPos = zPos;
 
             //ReadHue hue = new ReadHue(map);
 
@@ -76,20 +81,24 @@ namespace MJ_HorseLab2
         Vector2[] FRONT_FACE_TEXCOORD = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
 
 
+        public void Init(int chunkNumber)
         public void Init()
         {
+            for (int x = chunkNumber * chunkWidth; x < (chunkNumber *chunkWidth) + chunkWidth; x++)
 
-            for (int x = 0; x < 16; x++)
+            for (int tempX = 0; tempX < 16; tempX++)
             {
-                for (int y = 0; y < chunkHeight; y++)
+                for (int tempZ = 0; tempZ < 16; tempZ++)
                 {
-                    for (int z = 0; z < 16; z++)
+                    for (int y = 0; y < chunkHeight; y++)
                     //for (int z = 0; z < chunkDepth; z++)
                     {
-                        switch (chunkData[x, y, z])
-                        {
+                        int x = tempX + _xPos;
+                        int z = tempZ + _zPos;
+                        switch (chunkData[tempX, y, tempZ])
+                        {   
                             case STONE:
-                                #region StoneVertices
+                                #region StoneVertices  
                                 stoneVertices.Add(new VertexPositionTexture(new Vector3(x, y, z) + LEFT_FACE_POS[2], LEFT_FACE_TEXCOORD[0]));
                                 stoneVertices.Add(new VertexPositionTexture(new Vector3(x, y, z) + LEFT_FACE_POS[1], LEFT_FACE_TEXCOORD[1]));
                                 stoneVertices.Add(new VertexPositionTexture(new Vector3(x, y, z) + LEFT_FACE_POS[0], LEFT_FACE_TEXCOORD[2]));
@@ -137,7 +146,6 @@ namespace MJ_HorseLab2
 
                             case DIRT:
                                 #region DirtVertices
-
                                 dirtVertices.Add(new VertexPositionTexture(new Vector3(x, y, z) + LEFT_FACE_POS[2], LEFT_FACE_TEXCOORD[0]));
                                 dirtVertices.Add(new VertexPositionTexture(new Vector3(x, y, z) + LEFT_FACE_POS[1], LEFT_FACE_TEXCOORD[1]));
                                 dirtVertices.Add(new VertexPositionTexture(new Vector3(x, y, z) + LEFT_FACE_POS[0], LEFT_FACE_TEXCOORD[2]));

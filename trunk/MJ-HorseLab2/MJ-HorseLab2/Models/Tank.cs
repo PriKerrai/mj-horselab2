@@ -103,8 +103,8 @@ namespace MJ_HorseLab2.Models
         {
             Position = new Vector3(15, 7, 20);
 
-            Scale = 0.01f;
-            MoveSpeed = 0.01f;
+            Scale = 0.007f;
+            MoveSpeed = 0.5f;
             Rotation = Quaternion.Identity;
         }
 
