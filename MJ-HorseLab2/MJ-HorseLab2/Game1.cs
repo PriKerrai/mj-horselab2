@@ -75,7 +75,7 @@ namespace MJ_HorseLab2
             //test = Content.Load<Model>("test");
             stoneTexture = Content.Load<Texture2D>("stone");
             dirtTexture = Content.Load<Texture2D>("dirt");
-            grassTexture = Content.Load<Texture2D>("dot");
+            grassTexture = Content.Load<Texture2D>("grass");
             map = Content.Load<Texture2D>("berg");
             effect = new BasicEffect(GraphicsDevice);
 
