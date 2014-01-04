@@ -90,14 +90,19 @@ namespace MJ_HorseLab2
         private void CreateChunks()
         {
             chunkList = new List<Chunk>();
+            int xPosition = 0;
+            int zPosition = 0;
 
-            for(int x = 0; x < 128; x+=16)
+            for(int x = 0; x < 14; x++ )
             {
-                for(int z = 0; z < 128; z+=16)
+                zPosition = 0;
+                for(int z = 0; z < 14; z++ )
                 {
-                    Chunk chunk = new Chunk(_device, _stoneTexture, _dirtTexture, _grassTexture, _map, this, x, z);
+                    Chunk chunk = new Chunk(_device, _stoneTexture, _dirtTexture, _grassTexture, _map, this, xPosition, zPosition);
                     chunkList.Add(chunk);
+                    zPosition += 16;
                 }
+                xPosition += 16;
             }
         }
 
