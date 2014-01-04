@@ -45,6 +45,7 @@ namespace MJ_HorseLab2
             _grassTexture = grassTexture;
             _device = device;
 
+            
             InitWorldData();
             CreateChunks();
         }
@@ -93,6 +94,7 @@ namespace MJ_HorseLab2
             int xPosition = 0;
             int zPosition = 0;
 
+            
             for(int x = 0; x < 4; x++ )
             {
                 zPosition = 0;
