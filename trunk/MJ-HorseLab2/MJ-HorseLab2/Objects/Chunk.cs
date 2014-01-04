@@ -81,16 +81,14 @@ namespace MJ_HorseLab2
         Vector2[] FRONT_FACE_TEXCOORD = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
 
 
-        public void Init(int chunkNumber)
         public void Init()
         {
-            for (int x = chunkNumber * chunkWidth; x < (chunkNumber *chunkWidth) + chunkWidth; x++)
 
             for (int tempX = 0; tempX < 16; tempX++)
             {
-                for (int tempZ = 0; tempZ < 16; tempZ++)
+                for (int y = 0; y < chunkHeight; y++)
                 {
-                    for (int y = 0; y < chunkHeight; y++)
+                    for (int tempZ = 0; tempZ < 16; tempZ++)
                     //for (int z = 0; z < chunkDepth; z++)
                     {
                         int x = tempX + _xPos;
