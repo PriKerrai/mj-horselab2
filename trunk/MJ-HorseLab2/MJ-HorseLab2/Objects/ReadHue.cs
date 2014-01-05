@@ -90,78 +90,6 @@ namespace MJ_HorseLab2
             }
         }
 
-
-        private void CullWorldData()
-        {
-            culledWorldData = new byte[_map.Width, HEIGHT, _map.Height];
-            CopyArray();
-            int zWorldPos = 0;
-
-            for (int x = 1; x < _map.Width-1; x++)
-            {
-                for (int z = 1; z < _map.Height-1; z++)               
-                {
-                    for (int y = 1; y < HEIGHT - 1; y++)
-                    {
-                        if ((worldData[x + 1, y, z] != EMPTY) && (worldData[x - 1, y, z] != EMPTY) &&
-                             (worldData[x, y, z + 1] != EMPTY) && (worldData[x, y, z - 1] != EMPTY) &&
-                             (worldData[x, y + 1, z] != EMPTY) && (worldData[x, y - 1, z] != EMPTY) &&
-                            (worldData[x + 1, y, z] != 0) && (worldData[x - 1, y, z] != 0) &&
-                             (worldData[x, y, z + 1] != 0) && (worldData[x, y, z - 1] != 0) &&
-                             (worldData[x, y + 1, z] != 0) && (worldData[x, y - 1, z] != 0))
-                        {
-
-                            culledWorldData[x, y, z] = EMPTY;
-
-                        }
-
-                        //if ((worldData[x + 1, y, z] == 1 || worldData[x + 1, y, z] == 2 || worldData[x + 1, y, z] == 3) &&
-                        //    (worldData[x - 1, y, z] == 1 || worldData[x - 1, y, z] == 2 || worldData[x - 1, y, z] == 3) &&
-                        //    (worldData[x, y, z + 1] == 1 || worldData[x, y, z + 1] == 2 || worldData[x, y, z + 1] == 3) &&
-                        //    (worldData[x, y, z - 1] == 1 || worldData[x, y, z - 1] == 2 || worldData[x, y, z - 1] == 3) &&
-                        //    (worldData[x, y + 1, z] == 1 || worldData[x, y + 1, z] == 2 || worldData[x, y + 1, z] == 3) &&
-                        //    (worldData[x, y - 1, z] == 1 || worldData[x, y - 1, z] == 2 || worldData[x, y - 1, z] == 3))
-                        //{
-                        //        culledWorldData[x, y, z] = EMPTY;
-                        //}  
-
-                        //    if (z == 0)
-                        //    {
-                        //        if (zWorldPos == 0)
-                        //        {
-                        //            culledWorldData[x, y, z] = 3;
-                        //        }
-                        //    }
-                        //    else if (z == 1)
-                        //    {
-                        //        culledWorldData[x, y, z] = 2;
-                        //    }
-                        //    else if ((worldData[x + 1, y, z] == 1) && (worldData[x - 1, y, z] == 1) &&
-                        //        (worldData[x, y, z + 1] == 1) && (worldData[x, y, z - 1] == 1) && (worldData[x, y + 1, z] == 1) && (worldData[x, y - 1, z] == 1))
-                        //    {
-                        //        culledWorldData[x, y, z] = 3;
-                        //    } 
-                        //}
-                        //zWorldPos++;
-                    }
-                }
-            }
-        }
-
-        private void CopyArray()
-        {
-            for (int x = 0; x < _map.Width; x++)
-            {
-                for (int z = 0; z < _map.Height; z++)
-                {
-                    for (int y = 0; y < HEIGHT; y++)
-                    {
-                        culledWorldData[x, y, z] = worldData[x, y, z];
-                    }
-                }
-            }
-        }
-
         private void CreateChunks()
         {
             chunkList = new List<Chunk>();
@@ -205,63 +133,7 @@ namespace MJ_HorseLab2
 
             return culling ? GetCulledChunkData(chunkData) : chunkData;
 
-            //int chunksX = 16;
-            //int chunksZ = 16;
-
-            //int ChunkX = _map.Width/chunksX;
-            //int ChunkZ = _map.Height/chunksZ;
-
-            //spatialData = new List<Tuple<int, int>>();
-
-            //for (int x = 0; x < ChunkX; x++)
-            //{
-            //    for (int z = 0; z < ChunkZ; z++)
-            //    {
-            //        List<Tuple<int, int, int>> heightData = new List<Tuple<int, int, int>>();
-                    
-            //        for (int tempX = 0; tempX < chunksX; tempX++)
-            //        {
-            //            for (int tempZ = 0; tempZ < chunksZ; tempZ++)
-            //            {
-            //                int mapX = (x * chunksX + tempX);
-            //                int mapZ = (ushort)(z * chunksZ + tempZ);
-
-            //                byte height = GetHeight(_colors[mapX, mapZ]);
-                            
-            //                heightData.Add(new Tuple<int, int, int>(tempX, height, tempZ));
-            //             }
-            //        }
-            //        spatialData.Add(new Tuple<int, int>(x, z));
-            //    }
-            //}
-
-            //byte[,,] chunkData = new byte[_map.Height,_map.Width,_map.Height*_map.Width];
-            //byte[, ,] chunkData = new byte[_map.Width, HEIGHT, _map.Height];
-            //byte height;
-            //for (int x = 0; x < _map.Width; x++)
-            //{
-            //    for (int z = 0; z < _map.Height; z++)
-            //    {
-            //        height = GetHeight(_colors[x, z]);
-            //        for (int y = 0; y < HEIGHT; y++)
-            //        {
-            //            if (y < height)
-            //            {
-            //                if (y < 4)
-            //                    chunkData[x, y, z] = STONE;
-            //                else if (y < 8)
-            //                    chunkData[x, y, z] = DIRT;
-            //                else if (y < 12)
-            //                    chunkData[x, y, z] = GRASS;
-            //                else
-            //                    chunkData[x, y, z] = EMPTY;
-            //            }
-            //        }
-
-            //    }
-            //}
-
-            //return chunkData;
+            
             
         }
 
