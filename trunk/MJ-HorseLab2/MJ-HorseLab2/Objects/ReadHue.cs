@@ -19,14 +19,15 @@ namespace MJ_HorseLab2
         const byte EMPTY = 4;
         //public byte[, ,] chunkData;
         private byte[, ,] worldData;
+        private byte[, ,] culledWorldData;
         private List<Chunk> chunkList;
+        private bool culling;
 
         Texture2D _stoneTexture;
         Texture2D _dirtTexture;
         Texture2D _grassTexture;
         GraphicsDevice _device;
 
-        public List<Tuple<int, int>> spatialData;
 
         //public ReadHue(Texture2D map)
         //{
@@ -37,6 +38,7 @@ namespace MJ_HorseLab2
 
         public ReadHue(Texture2D map, GraphicsDevice device, Texture2D stoneTexture, Texture2D dirtTexture, Texture2D grassTexture)
         {
+            culling = true;
             _map = map;
             _colors = Texture2DArray();
 
@@ -45,8 +47,8 @@ namespace MJ_HorseLab2
             _grassTexture = grassTexture;
             _device = device;
 
-            
             InitWorldData();
+            //CullWorldData();
             CreateChunks();
         }
 
@@ -88,17 +90,88 @@ namespace MJ_HorseLab2
             }
         }
 
+
+        private void CullWorldData()
+        {
+            culledWorldData = new byte[_map.Width, HEIGHT, _map.Height];
+            CopyArray();
+            int zWorldPos = 0;
+
+            for (int x = 1; x < _map.Width-1; x++)
+            {
+                for (int z = 1; z < _map.Height-1; z++)               
+                {
+                    for (int y = 1; y < HEIGHT - 1; y++)
+                    {
+                        if ((worldData[x + 1, y, z] != EMPTY) && (worldData[x - 1, y, z] != EMPTY) &&
+                             (worldData[x, y, z + 1] != EMPTY) && (worldData[x, y, z - 1] != EMPTY) &&
+                             (worldData[x, y + 1, z] != EMPTY) && (worldData[x, y - 1, z] != EMPTY) &&
+                            (worldData[x + 1, y, z] != 0) && (worldData[x - 1, y, z] != 0) &&
+                             (worldData[x, y, z + 1] != 0) && (worldData[x, y, z - 1] != 0) &&
+                             (worldData[x, y + 1, z] != 0) && (worldData[x, y - 1, z] != 0))
+                        {
+
+                            culledWorldData[x, y, z] = EMPTY;
+
+                        }
+
+                        //if ((worldData[x + 1, y, z] == 1 || worldData[x + 1, y, z] == 2 || worldData[x + 1, y, z] == 3) &&
+                        //    (worldData[x - 1, y, z] == 1 || worldData[x - 1, y, z] == 2 || worldData[x - 1, y, z] == 3) &&
+                        //    (worldData[x, y, z + 1] == 1 || worldData[x, y, z + 1] == 2 || worldData[x, y, z + 1] == 3) &&
+                        //    (worldData[x, y, z - 1] == 1 || worldData[x, y, z - 1] == 2 || worldData[x, y, z - 1] == 3) &&
+                        //    (worldData[x, y + 1, z] == 1 || worldData[x, y + 1, z] == 2 || worldData[x, y + 1, z] == 3) &&
+                        //    (worldData[x, y - 1, z] == 1 || worldData[x, y - 1, z] == 2 || worldData[x, y - 1, z] == 3))
+                        //{
+                        //        culledWorldData[x, y, z] = EMPTY;
+                        //}  
+
+                        //    if (z == 0)
+                        //    {
+                        //        if (zWorldPos == 0)
+                        //        {
+                        //            culledWorldData[x, y, z] = 3;
+                        //        }
+                        //    }
+                        //    else if (z == 1)
+                        //    {
+                        //        culledWorldData[x, y, z] = 2;
+                        //    }
+                        //    else if ((worldData[x + 1, y, z] == 1) && (worldData[x - 1, y, z] == 1) &&
+                        //        (worldData[x, y, z + 1] == 1) && (worldData[x, y, z - 1] == 1) && (worldData[x, y + 1, z] == 1) && (worldData[x, y - 1, z] == 1))
+                        //    {
+                        //        culledWorldData[x, y, z] = 3;
+                        //    } 
+                        //}
+                        //zWorldPos++;
+                    }
+                }
+            }
+        }
+
+        private void CopyArray()
+        {
+            for (int x = 0; x < _map.Width; x++)
+            {
+                for (int z = 0; z < _map.Height; z++)
+                {
+                    for (int y = 0; y < HEIGHT; y++)
+                    {
+                        culledWorldData[x, y, z] = worldData[x, y, z];
+                    }
+                }
+            }
+        }
+
         private void CreateChunks()
         {
             chunkList = new List<Chunk>();
             int xPosition = 0;
             int zPosition = 0;
 
-            
-            for(int x = 0; x < 4; x++ )
+            for(int x = 0; x < 16; x++ )
             {
                 zPosition = 0;
-                for(int z = 0; z < 4; z++ )
+                for(int z = 0; z < 16; z++ )
                 {
                     Chunk chunk = new Chunk(_device, _stoneTexture, _dirtTexture, _grassTexture, _map, this, xPosition, zPosition);
                     chunkList.Add(chunk);
@@ -120,14 +193,17 @@ namespace MJ_HorseLab2
                 {
                     for (int y = 0; y < 32; y++)
                     {
+                        //if culling is chosen used culledWorldData
+                        //else used worldData
                         chunkData[x, y, z] = worldData[(byte)xPos, y, (byte)zPos];
+                        //chunkData[x, y, z] = culledWorldData[(byte)xPos, y, (byte)zPos];
                     }
                     zPos++;
                 }
                 xPos++;
             }
 
-            return chunkData;
+            return culling ? GetCulledChunkData(chunkData) : chunkData;
 
             //int chunksX = 16;
             //int chunksZ = 16;
@@ -188,6 +264,67 @@ namespace MJ_HorseLab2
             //return chunkData;
             
         }
+
+
+        public byte[, ,] GetCulledChunkData(byte[, ,] chunkData)
+        {
+            byte[, ,] culledChunkData = new byte[16, HEIGHT, 16];
+
+            for (int x = 0; x < 16; x++)
+            {
+                for (int z = 0; z < 16; z++)
+                {
+                    for (int y = 0; y < 32; y++)
+                    {
+                        if (x == 0 || z == 0 || y == 0 || x == 15 || z == 15 || y == 31)
+                        {
+                            culledChunkData[x, y, z] = chunkData[x, y, z];
+                        }
+                        else if ((chunkData[x + 1, y, z] != EMPTY) && (chunkData[x - 1, y, z] != EMPTY) &&
+                                 (chunkData[x, y, z + 1] != EMPTY) && (chunkData[x, y, z - 1] != EMPTY) &&
+                                 (chunkData[x, y + 1, z] != EMPTY) && (chunkData[x, y - 1, z] != EMPTY) &&
+                                 (chunkData[x + 1, y, z] != 0) && (chunkData[x - 1, y, z] != 0) &&
+                                 (chunkData[x, y, z + 1] != 0) && (chunkData[x, y, z - 1] != 0) &&
+                                 (chunkData[x, y + 1, z] != 0) && (chunkData[x, y - 1, z] != 0))
+                        {
+                            culledChunkData[x, y, z] = EMPTY;
+                        }
+                        else
+                        {
+                            culledChunkData[x, y, z] = chunkData[x, y, z];
+                        }
+
+                    }
+                }
+            }
+
+            return culledChunkData;
+        }
+
+
+
+
+        private void CreateBoundingBoxes()
+        {
+            byte[, ,] chunkData = new byte[16, HEIGHT, 16];
+
+            for (int x = 0; x < _map.Width; x++)
+            {
+                for (int z = 0; z < _map.Height; z++)
+                {
+                    for (int y = 0; y < HEIGHT; y++)
+                    {
+                        if (y != HEIGHT-1 && worldData[x, y+1, z] == EMPTY) //och även om den är 0???
+                        {
+                            //create new bounding box for that voxel
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
+
 
         private Color[,] Texture2DArray()
         {
