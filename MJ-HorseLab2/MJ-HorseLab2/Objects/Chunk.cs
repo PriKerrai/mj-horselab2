@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace MJ_HorseLab2
 {
@@ -16,7 +17,7 @@ namespace MJ_HorseLab2
         const byte STONE = 1;
         const byte DIRT = 2;
         const byte GRASS = 3;
-        const byte EMPTY = 4;
+        const byte EMPTY = 0;
 
         private int _xPos;
         private int _zPos;
@@ -53,12 +54,16 @@ namespace MJ_HorseLab2
 
             Init();
 
-            
-            _stoneBuffer = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, stoneVertices.Count, BufferUsage.WriteOnly);
-            _stoneBuffer.SetData<VertexPositionTexture>(stoneVertices.ToArray());
-            
-            _dirtBuffer = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, dirtVertices.Count, BufferUsage.WriteOnly);
-            _dirtBuffer.SetData<VertexPositionTexture>(dirtVertices.ToArray());
+            if (stoneVertices.Count > 0)
+            {
+                _stoneBuffer = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, stoneVertices.Count, BufferUsage.WriteOnly);
+                _stoneBuffer.SetData<VertexPositionTexture>(stoneVertices.ToArray());
+            }
+            if (dirtVertices.Count > 0)
+            {
+                _dirtBuffer = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, dirtVertices.Count, BufferUsage.WriteOnly);
+                _dirtBuffer.SetData<VertexPositionTexture>(dirtVertices.ToArray());
+            }
             if (grassVertices.Count > 0)
             {
                 _grassBuffer = new VertexBuffer(device, VertexPositionTexture.VertexDeclaration, grassVertices.Count, BufferUsage.WriteOnly);
@@ -93,6 +98,7 @@ namespace MJ_HorseLab2
                     {
                         int x = tempX + _xPos;
                         int z = tempZ + _zPos;
+                        //Debug.WriteLine("X är =" + _xPos + "  Z är då: " + _zPos);
                         switch (chunkData[tempX, y, tempZ])
                         {   
                             case STONE:
@@ -248,8 +254,14 @@ namespace MJ_HorseLab2
         {
             effect.VertexColorEnabled = false;
             effect.TextureEnabled = true;
-            DrawStone(camera, effect);
-            DrawDirt(camera, effect);
+            if (stoneVertices.Count > 0)
+            {
+                DrawStone(camera, effect);
+            }
+            if (dirtVertices.Count > 0)
+            {
+                DrawDirt(camera, effect);
+            }
             if (grassVertices.Count > 0)
             {
                 DrawGrass(camera, effect);

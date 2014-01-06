@@ -10,7 +10,7 @@ namespace Laboration3Datorgrafik {
         public Vector3 Position { get; set; }
         public Quaternion Rotation { get; set; }
 
-        private float MoveSpeed = 1f;
+        private float MoveSpeed = 3f;
 
         public FlyingCamera() {
             this.Position = new Vector3(15,10,-20);
