@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace MJ_HorseLab2
 {
@@ -16,7 +17,7 @@ namespace MJ_HorseLab2
         const byte STONE = 1;
         const byte DIRT = 2;
         const byte GRASS = 3;
-        const byte EMPTY = 4;
+        const byte EMPTY = 0;
         //public byte[, ,] chunkData;
         private byte[, ,] worldData;
         private byte[, ,] culledWorldData;
@@ -66,11 +67,13 @@ namespace MJ_HorseLab2
         {
             worldData = new byte[_map.Width, HEIGHT, _map.Height];
             byte height;
+
             for (int x = 0; x < _map.Width; x++)
             {
                 for (int z = 0; z < _map.Height; z++)
                 {
                     height = GetHeight(_colors[x, z]);
+                    //Debug.WriteLine(height);
                     for (int y = 0; y < HEIGHT; y++)
                     {
                         if (y < height)
@@ -79,7 +82,7 @@ namespace MJ_HorseLab2
                                 worldData[x, y, z] = STONE;
                             else if (y < 8)
                                 worldData[x, y, z] = DIRT;
-                            else if (y < 12)
+                            else if (y < 33)
                                 worldData[x, y, z] = GRASS;
                             else
                                 worldData[x, y, z] = EMPTY;
@@ -123,12 +126,12 @@ namespace MJ_HorseLab2
                     {
                         //if culling is chosen used culledWorldData
                         //else used worldData
-                        chunkData[x, y, z] = worldData[(byte)xPos, y, (byte)zPos];
+                        chunkData[x, y, z] = worldData[(byte)xPos+x, y, (byte)zPos+z];
                         //chunkData[x, y, z] = culledWorldData[(byte)xPos, y, (byte)zPos];
                     }
-                    zPos++;
+                    
                 }
-                xPos++;
+                
             }
 
             return culling ? GetCulledChunkData(chunkData) : chunkData;
@@ -206,7 +209,7 @@ namespace MJ_HorseLab2
 
             for (int x = 0; x < _map.Width; x++)
                 for (int y = 0; y < _map.Height; y++)
-                    colors2D[x, y] = colors[x + y * _map.Width];
+                    colors2D[x, y] = colors[x + (y * _map.Width)];
             return colors2D;
         }
 

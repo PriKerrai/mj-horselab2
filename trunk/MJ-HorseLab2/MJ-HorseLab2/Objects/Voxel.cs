@@ -152,16 +152,6 @@ namespace MJ_HorseLab2
 
         }
 
-        /*
-        public void Draw(BasicEffect effect)
-        {
-            effect.World = Matrix.Identity;
-            effect.CurrentTechnique.Passes[0].Apply();
-            device.SetVertexBuffer(buffer);
-            device.DrawPrimitives(PrimitiveType.TriangleList,0, buffer.VertexCount);
-        }
-         * */
-
         public void Draw(Camera camera, BasicEffect effect)
         {
             effect.VertexColorEnabled = false;

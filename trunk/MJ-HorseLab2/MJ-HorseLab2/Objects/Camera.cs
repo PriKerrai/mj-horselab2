@@ -29,7 +29,7 @@ namespace MJ_HorseLab2
             AspectRatio = device.DisplayMode.AspectRatio;
             CameraPos = startingPosition;
             nearPlaneDistance = 1f;
-            farPlaneDistance = 200f;
+            farPlaneDistance = 500;
 
             this.ViewMatrix = Matrix.CreateLookAt(this.CameraPos, new Vector3(0, 0, 1), new Vector3(0, 1, 0));
             this.ProjectionMatrix = Matrix.CreatePerspectiveFieldOfView(
