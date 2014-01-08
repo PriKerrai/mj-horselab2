@@ -55,13 +55,14 @@ namespace MJ_HorseLab2.Models
 
         KeyboardState keys;
         float leftRightRot;
-
         private ReadHue _hue;
-        private float zTilt;
+        private int zTilt;
+        Quaternion rotationZ;
 
         #endregion
 
         #region Properties
+        public bool freeFlowCamera { get; set; }
 
         public float WheelRotation
         {
@@ -108,8 +109,8 @@ namespace MJ_HorseLab2.Models
             zTilt = 0;
             Position = new Vector3(15, 7, 20);
 
-            Scale = 0.003f;
-            MoveSpeed = 0.5f;
+            Scale = 0.0015f;
+            MoveSpeed = 0.05f;
             Rotation = Quaternion.Identity;
         }
 
@@ -154,48 +155,6 @@ namespace MJ_HorseLab2.Models
             wheelRotationValue += rotationChange;
         }
 
-        private void CheckTilt()
-        {
-            float leftX = Position.X + (float)0.5;
-            float rightX = Position.X - (float)0.5;
-            float leftZ = Position.Z + (float)0.5;
-            float rightZ = Position.Z - (float)0.5;
-
-            byte yPositionForLeftX = _hue.GetYPosition(leftX, Position.Z);
-            byte yPositionForRightX = _hue.GetYPosition(rightX, Position.Z);
-            byte yPositionForLeftZ = _hue.GetYPosition(Position.X, leftZ);
-            byte yPositionForRightZ = _hue.GetYPosition(Position.X, rightZ);
-            zTilt = 0;
-
-            if (yPositionForLeftX > yPositionForRightX)
-            {
-                //tilt so left side is higher
-                zTilt = -1;
-            }
-            else if (yPositionForRightX > yPositionForLeftX)
-            {
-                //tilt so right side is higher
-                zTilt = 1;
-            }
-            else if (yPositionForLeftZ > yPositionForRightZ)
-            {
-                //tilt so left side is higher
-                zTilt = 0;
-            }
-            else if (yPositionForRightZ > yPositionForLeftZ)
-            {
-                //tilt so right side is higher
-                zTilt = 0;
-            }
-            else
-            {
-                zTilt = 0;
-            }
-
-
-
-        }
-
         public void Move(Vector3 addedVector)
         {
             byte y = _hue.GetYPosition(Position.X, Position.Z);
@@ -210,28 +169,28 @@ namespace MJ_HorseLab2.Models
             keys = Keyboard.GetState();
 
             float turningSpeed = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0f;
-            turningSpeed *= 1.6f * 0.5f;
+            turningSpeed *= 1.6f * 1f;
             leftRightRot = 0;
-
+            float tilt = 0;
             if (keys.IsKeyDown(Keys.Up))
             {
                 Move(-Matrix.CreateFromQuaternion(Rotation).Forward);
-                Rotatewheels(0.01f);
+                Rotatewheels(0.5f);
             }
             if (keys.IsKeyDown(Keys.Down))
             {
                 Move(Matrix.CreateFromQuaternion(Rotation).Forward);
-                Rotatewheels(-0.01f);
+                Rotatewheels(-0.5f);
             }
             if (keys.IsKeyDown(Keys.Left))
             {
                 leftRightRot += turningSpeed;
-                SteerRotation = 90;
+                SteerRotation = 135;
             }
             if (keys.IsKeyDown(Keys.Right))
             {
                 leftRightRot -= turningSpeed;
-                SteerRotation = -90;
+                SteerRotation = -135;
             }
             if (keys.IsKeyUp(Keys.Left) && keys.IsKeyUp(Keys.Right))
             {
@@ -262,13 +221,35 @@ namespace MJ_HorseLab2.Models
             {
                 HatchRotation -= turningSpeed;
             }
+            if (keys.IsKeyDown(Keys.C))
+            {
+                freeFlowCamera = true;
+            }
+            if (keys.IsKeyDown(Keys.V))
+            {
+                freeFlowCamera = false;
+            }
 
 
             Quaternion changeInRotation = Quaternion.CreateFromAxisAngle(new Vector3(0, 1, 0), leftRightRot)
                                        * Quaternion.CreateFromAxisAngle(new Vector3(1, 0, 0), 0)
-                                       * Quaternion.CreateFromAxisAngle(new Vector3(0, 1, 0), 0)
-                                       * Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 1), zTilt);
+                                       * Quaternion.CreateFromAxisAngle(new Vector3(0, 1, 0), 0);
+                                       //* Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 1), zTilt);
 
+
+            if (keys.IsKeyDown(Keys.Y))
+            {
+                tilt = 0.1f;
+                changeInRotation = Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 1), tilt);
+            }
+            tilt = 0;
+            if (keys.IsKeyDown(Keys.U))
+            {
+                tilt = -0.1f;
+                changeInRotation = Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 1), tilt);
+            }
+
+            tilt = 0;
             Rotation *= changeInRotation;
         }
 
@@ -295,7 +276,6 @@ namespace MJ_HorseLab2.Models
             cannonBone.Transform = cannonRotation * cannonTransform;
             hatchBone.Transform = hatchRotation * hatchTransform;
 
-
             // Look up combined bone matrices for the entire model.
             tankModel.CopyAbsoluteBoneTransformsTo(boneTransforms);
 
@@ -304,7 +284,7 @@ namespace MJ_HorseLab2.Models
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.World = boneTransforms[mesh.ParentBone.Index] * Matrix.CreateScale(Scale) * Matrix.CreateFromQuaternion(Rotation) * Matrix.CreateTranslation(Position);
+                    effect.World = boneTransforms[mesh.ParentBone.Index] * Matrix.CreateScale(Scale) * Matrix.CreateFromQuaternion(rotationZ) * Matrix.CreateFromQuaternion(Rotation) * Matrix.CreateTranslation(Position);
                     effect.View = view;
                     effect.Projection = projection;
                     effect.EnableDefaultLighting();
@@ -313,6 +293,53 @@ namespace MJ_HorseLab2.Models
             }
         }
 
+        private void CheckTilt()
+        {
+            float leftX = Position.X + (float)0.5;
+            float rightX = Position.X - (float)0.5;
+            float leftZ = Position.Z + (float)0.5;
+            float rightZ = Position.Z - (float)0.5;
+
+            byte yPositionForLeftX = _hue.GetYPosition(leftX, Position.Z);
+            byte yPositionForRightX = _hue.GetYPosition(rightX, Position.Z);
+            byte yPositionForLeftZ = _hue.GetYPosition(Position.X, leftZ);
+            byte yPositionForRightZ = _hue.GetYPosition(Position.X, rightZ);
+            zTilt = 0;
+
+            if (yPositionForLeftX > yPositionForRightX)
+            {
+                //tilt so left side is higher
+                zTilt = -1;
+                rotationZ = Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 1), (float)0.8);
+            }
+            else if (yPositionForRightX > yPositionForLeftX)
+            {
+                //tilt so right side is higher
+                zTilt = 1;
+                rotationZ = Quaternion.CreateFromAxisAngle(new Vector3(0, 0, -1), (float)0.8);
+            }
+            else if (yPositionForLeftZ > yPositionForRightZ)
+            {
+                //tilt so left side is higher
+                zTilt = 0;
+                rotationZ = Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 0), (float)0);
+            }
+            else if (yPositionForRightZ > yPositionForLeftZ)
+            {
+                //tilt so right side is higher
+                zTilt = 0;
+                rotationZ = Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 0), (float)0);
+
+            }
+            else
+            {
+                zTilt = 0;
+                rotationZ = Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 0), (float)0);
+
+            }
+        }
+
+        
     }    
     
 }
