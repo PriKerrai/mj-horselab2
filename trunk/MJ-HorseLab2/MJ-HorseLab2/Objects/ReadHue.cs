@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace MJ_HorseLab2
 {
-    class ReadHue
+    public class ReadHue
     {
         Texture2D _map;
         Color[,] _colors;
@@ -216,6 +216,21 @@ namespace MJ_HorseLab2
         private byte GetHeight(Color c1)
         {
             return (byte)(RGB2HSL(c1).h / 12);
+        }
+
+        public byte GetYPosition(float x, float z)
+        {
+            byte xPos = (byte)x;
+            byte zPos = (byte)z;
+
+            for (byte y = 0; y <= 31; y++)
+            {
+                if (worldData[xPos, y, zPos] == 0)
+                {
+                    return y;
+                }
+            }
+            return 0;
         }
 
         private HSL RGB2HSL(Color c1)

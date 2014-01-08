@@ -56,6 +56,9 @@ namespace MJ_HorseLab2.Models
         KeyboardState keys;
         float leftRightRot;
 
+        private ReadHue _hue;
+        private float zTilt;
+
         #endregion
 
         #region Properties
@@ -99,11 +102,13 @@ namespace MJ_HorseLab2.Models
 
         #endregion
 
-        public Tank()
+        public Tank(ReadHue hue)
         {
+            _hue = hue;
+            zTilt = 0;
             Position = new Vector3(15, 7, 20);
 
-            Scale = 0.007f;
+            Scale = 0.003f;
             MoveSpeed = 0.5f;
             Rotation = Quaternion.Identity;
         }
@@ -149,8 +154,53 @@ namespace MJ_HorseLab2.Models
             wheelRotationValue += rotationChange;
         }
 
+        private void CheckTilt()
+        {
+            float leftX = Position.X + (float)0.5;
+            float rightX = Position.X - (float)0.5;
+            float leftZ = Position.Z + (float)0.5;
+            float rightZ = Position.Z - (float)0.5;
+
+            byte yPositionForLeftX = _hue.GetYPosition(leftX, Position.Z);
+            byte yPositionForRightX = _hue.GetYPosition(rightX, Position.Z);
+            byte yPositionForLeftZ = _hue.GetYPosition(Position.X, leftZ);
+            byte yPositionForRightZ = _hue.GetYPosition(Position.X, rightZ);
+            zTilt = 0;
+
+            if (yPositionForLeftX > yPositionForRightX)
+            {
+                //tilt so left side is higher
+                zTilt = -1;
+            }
+            else if (yPositionForRightX > yPositionForLeftX)
+            {
+                //tilt so right side is higher
+                zTilt = 1;
+            }
+            else if (yPositionForLeftZ > yPositionForRightZ)
+            {
+                //tilt so left side is higher
+                zTilt = 0;
+            }
+            else if (yPositionForRightZ > yPositionForLeftZ)
+            {
+                //tilt so right side is higher
+                zTilt = 0;
+            }
+            else
+            {
+                zTilt = 0;
+            }
+
+
+
+        }
+
         public void Move(Vector3 addedVector)
         {
+            byte y = _hue.GetYPosition(Position.X, Position.Z);
+            Position = new Vector3(Position.X, y, Position.Z);
+            CheckTilt();
             Position += MoveSpeed * addedVector;
         }
 
@@ -216,7 +266,8 @@ namespace MJ_HorseLab2.Models
 
             Quaternion changeInRotation = Quaternion.CreateFromAxisAngle(new Vector3(0, 1, 0), leftRightRot)
                                        * Quaternion.CreateFromAxisAngle(new Vector3(1, 0, 0), 0)
-                                       * Quaternion.CreateFromAxisAngle(new Vector3(0, 1, 0), 0);
+                                       * Quaternion.CreateFromAxisAngle(new Vector3(0, 1, 0), 0)
+                                       * Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 1), zTilt);
 
             Rotation *= changeInRotation;
         }
