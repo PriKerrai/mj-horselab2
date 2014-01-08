@@ -38,9 +38,9 @@ namespace MJ_HorseLab2
 
         public void Update(Vector3 pos, Quaternion rot)
         {
-            this.Rotation = Quaternion.Lerp(this.Rotation, rot, 0.1f);
+            //this.Rotation = Quaternion.Lerp(this.Rotation, rot, 0.1f);
 
-            Vector3 campos = new Vector3(0, 0, -1f);
+            Vector3 campos = new Vector3(0, 3, -7f);
             campos = Vector3.Transform(campos, Matrix.CreateFromQuaternion(this.Rotation));
             campos += pos;
 
