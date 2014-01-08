@@ -84,7 +84,7 @@ namespace MJ_HorseLab2
 
             
 
-            tank = new Tank();
+            tank = new Tank(hue);
             tank.Load(Content);
 
             fCamera = new FlyingCamera();

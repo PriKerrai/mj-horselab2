@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace MJ_HorseLab2
 {
-    class Chunk
+    public class Chunk
     {
         const int chunkWidth = 16;
         const int chunkDepth = 16;
