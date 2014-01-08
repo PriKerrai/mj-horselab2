@@ -99,10 +99,10 @@ namespace MJ_HorseLab2
             int xPosition = 0;
             int zPosition = 0;
 
-            for(int x = 0; x < 16; x++ )
+            for (int x = 0; x < 16; x++)
             {
                 zPosition = 0;
-                for(int z = 0; z < 16; z++ )
+                for (int z = 0; z < 16; z++)
                 {
                     Chunk chunk = new Chunk(_device, _stoneTexture, _dirtTexture, _grassTexture, _map, this, xPosition, zPosition);
                     chunkList.Add(chunk);
@@ -126,18 +126,18 @@ namespace MJ_HorseLab2
                     {
                         //if culling is chosen used culledWorldData
                         //else used worldData
-                        chunkData[x, y, z] = worldData[(byte)xPos+x, y, (byte)zPos+z];
+                        chunkData[x, y, z] = worldData[(byte)xPos + x, y, (byte)zPos + z];
                         //chunkData[x, y, z] = culledWorldData[(byte)xPos, y, (byte)zPos];
                     }
-                    
+
                 }
-                
+
             }
 
             return culling ? GetCulledChunkData(chunkData) : chunkData;
 
-            
-            
+
+
         }
 
 
@@ -189,7 +189,7 @@ namespace MJ_HorseLab2
                 {
                     for (int y = 0; y < HEIGHT; y++)
                     {
-                        if (y != HEIGHT-1 && worldData[x, y+1, z] == EMPTY) //och även om den är 0???
+                        if (y != HEIGHT - 1 && worldData[x, y + 1, z] == EMPTY) //och även om den är 0???
                         {
                             //create new bounding box for that voxel
                             break;

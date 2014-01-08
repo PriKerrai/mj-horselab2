@@ -32,7 +32,7 @@ namespace MJ_HorseLab2
 
         GraphicsDevice _device;
 
-        byte[,,] chunkData;
+        byte[, ,] chunkData;
         List<VertexPositionTexture> stoneVertices = new List<VertexPositionTexture>();
         List<VertexPositionTexture> grassVertices = new List<VertexPositionTexture>();
         List<VertexPositionTexture> dirtVertices = new List<VertexPositionTexture>();
@@ -100,9 +100,9 @@ namespace MJ_HorseLab2
                         int z = tempZ + _zPos;
                         //Debug.WriteLine("X är =" + _xPos + "  Z är då: " + _zPos);
                         switch (chunkData[tempX, y, tempZ])
-                        {   
+                        {
                             case STONE:
-                                #region StoneVertices  
+                                #region StoneVertices
                                 stoneVertices.Add(new VertexPositionTexture(new Vector3(x, y, z) + LEFT_FACE_POS[2], LEFT_FACE_TEXCOORD[0]));
                                 stoneVertices.Add(new VertexPositionTexture(new Vector3(x, y, z) + LEFT_FACE_POS[1], LEFT_FACE_TEXCOORD[1]));
                                 stoneVertices.Add(new VertexPositionTexture(new Vector3(x, y, z) + LEFT_FACE_POS[0], LEFT_FACE_TEXCOORD[2]));
@@ -246,9 +246,9 @@ namespace MJ_HorseLab2
                     }
                 }
             }
-            
+
         }
-        
+
 
         public void Draw(Camera camera, BasicEffect effect)
         {
@@ -280,7 +280,7 @@ namespace MJ_HorseLab2
             _device.SetVertexBuffer(_stoneBuffer);
             _device.DrawPrimitives(PrimitiveType.TriangleList, 0, _stoneBuffer.VertexCount / 3);
         }
-        
+
         private void DrawDirt(Camera camera, BasicEffect effect)
         {
             effect.Texture = _dirtTexture;
@@ -306,5 +306,5 @@ namespace MJ_HorseLab2
             _device.DrawPrimitives(PrimitiveType.TriangleList, 0, _grassBuffer.VertexCount / 3);
         }
     }
-      
+
 }

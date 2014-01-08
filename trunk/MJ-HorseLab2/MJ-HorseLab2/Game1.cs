@@ -22,7 +22,6 @@ namespace MJ_HorseLab2
         SpriteBatch spriteBatch;
         Camera camera;
         FlyingCamera fCamera;
-        Voxel voxel;
         Texture2D stoneTexture;
         Texture2D dirtTexture;
         Texture2D grassTexture;
@@ -88,7 +87,7 @@ namespace MJ_HorseLab2
             tank.Load(Content);
 
             fCamera = new FlyingCamera();
-            this.camera = new Camera(GraphicsDevice, new Vector3(0, 12, 5));
+            this.camera = new Camera(GraphicsDevice, new Vector3(0, 0, 0));
         }
 
 
@@ -114,9 +113,16 @@ namespace MJ_HorseLab2
             countFPS(gameTime);
 
             tank.ProcessInput(gameTime);
-            fCamera.ProcessInput(gameTime);
-            camera.Update(fCamera.Position, fCamera.Rotation);
 
+            if (tank.freeFlowCamera)
+            {
+                fCamera.ProcessInput(gameTime);
+                camera.Update(fCamera.Position, fCamera.Rotation);
+            }
+            else
+            {
+                camera.Update(tank.Position, tank.Rotation);
+            }
             base.Update(gameTime);
         }
 
