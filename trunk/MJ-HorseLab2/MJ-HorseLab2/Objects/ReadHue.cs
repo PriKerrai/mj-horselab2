@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
+using MJ_HorseLab2.Models;
 
 namespace MJ_HorseLab2
 {
@@ -18,34 +19,28 @@ namespace MJ_HorseLab2
         const byte DIRT = 2;
         const byte GRASS = 3;
         const byte EMPTY = 0;
-        //public byte[, ,] chunkData;
         private byte[, ,] worldData;
-        private byte[, ,] culledWorldData;
         private List<Chunk> chunkList;
         private bool culling;
 
+        Texture2D[] _texture;
         Texture2D _stoneTexture;
         Texture2D _dirtTexture;
         Texture2D _grassTexture;
         GraphicsDevice _device;
+        Tank _tank;
 
-
-        //public ReadHue(Texture2D map)
-        //{
-        //    _map = map;
-        //    _colors = Texture2DArray();
-
-        //}
-
-        public ReadHue(Texture2D map, GraphicsDevice device, Texture2D stoneTexture, Texture2D dirtTexture, Texture2D grassTexture)
+        public ReadHue(Texture2D map, GraphicsDevice device, Texture2D[] texture, Tank tank)
         {
             culling = true;
             _map = map;
             _colors = Texture2DArray();
+            _tank = tank;
+            this._texture = texture;
 
-            _stoneTexture = stoneTexture;
-            _dirtTexture = dirtTexture;
-            _grassTexture = grassTexture;
+            _stoneTexture = texture[0];
+            _dirtTexture = texture[1];
+            _grassTexture = texture[2];
             _device = device;
 
             InitWorldData();
@@ -73,7 +68,6 @@ namespace MJ_HorseLab2
                 for (int z = 0; z < _map.Height; z++)
                 {
                     height = GetHeight(_colors[x, z]);
-                    //Debug.WriteLine(height);
                     for (int y = 0; y < HEIGHT; y++)
                     {
                         if (y < height)
@@ -104,7 +98,7 @@ namespace MJ_HorseLab2
                 zPosition = 0;
                 for (int z = 0; z < 16; z++)
                 {
-                    Chunk chunk = new Chunk(_device, _stoneTexture, _dirtTexture, _grassTexture, _map, this, xPosition, zPosition);
+                    Chunk chunk = new Chunk(_device, _texture, _map, this, xPosition, zPosition, _tank);
                     chunkList.Add(chunk);
                     zPosition += 16;
                 }
