@@ -36,6 +36,8 @@ namespace MJ_HorseLab2
 
         Tank tank;
 
+        int switchingTexture = 0;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -70,22 +72,23 @@ namespace MJ_HorseLab2
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             //test = Content.Load<Model>("test");
-            stoneTexture = Content.Load<Texture2D>("stone");
-            dirtTexture = Content.Load<Texture2D>("dirt");
-            grassTexture = Content.Load<Texture2D>("grass");
+            Texture2D[] textures = new Texture2D[4];
+            
+            textures[0] = Content.Load<Texture2D>("stone");
+            textures[1] = Content.Load<Texture2D>("dirt");
+            textures[2] = Content.Load<Texture2D>("grass");
+            textures[3] = Content.Load<Texture2D>("dot");
+
             map = Content.Load<Texture2D>("berg");
-            //map = Content.Load<Texture2D>("prick");
+            
             effect = new BasicEffect(GraphicsDevice);
 
-            //hue = new ReadHue(map);
-            hue = new ReadHue(map, this.GraphicsDevice, stoneTexture, dirtTexture, grassTexture);
-            //voxel = new NewVoxel(this.GraphicsDevice, texture);
-
-            
-
-            tank = new Tank(hue);
+            tank = new Tank();
             tank.Load(Content);
 
+            hue = new ReadHue(map, this.GraphicsDevice, textures, tank);
+            tank.ReadHueForTank(hue);
+            
             fCamera = new FlyingCamera();
             this.camera = new Camera(GraphicsDevice, new Vector3(0, 0, 0));
         }

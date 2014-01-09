@@ -27,8 +27,7 @@ namespace MJ_HorseLab2.Models
         ModelBone turretBone;
         ModelBone cannonBone;
         ModelBone hatchBone;
-
-
+        
         Matrix leftBackWheelTransform;
         Matrix rightBackWheelTransform;
         Matrix leftFrontWheelTransform;
@@ -103,15 +102,18 @@ namespace MJ_HorseLab2.Models
 
         #endregion
 
-        public Tank(ReadHue hue)
+        public Tank()
         {
-            _hue = hue;
             zTilt = 0;
             Position = new Vector3(15, 7, 20);
 
             Scale = 0.0015f;
             MoveSpeed = 0.05f;
             Rotation = Quaternion.Identity;
+        }
+
+        public void ReadHueForTank(ReadHue hue) {
+             _hue = hue;
         }
 
         /// <summary>

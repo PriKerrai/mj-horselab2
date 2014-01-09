@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
+using MJ_HorseLab2.Models;
 
 namespace MJ_HorseLab2
 {
@@ -13,6 +14,8 @@ namespace MJ_HorseLab2
         const int chunkWidth = 16;
         const int chunkDepth = 16;
         const int chunkHeight = 32;
+
+        
 
         const byte STONE = 1;
         const byte DIRT = 2;
@@ -25,10 +28,12 @@ namespace MJ_HorseLab2
         Texture2D _stoneTexture;
         Texture2D _dirtTexture;
         Texture2D _grassTexture;
+        Texture2D _dynamicTexture;
 
         VertexBuffer _stoneBuffer;
         VertexBuffer _grassBuffer;
         VertexBuffer _dirtBuffer;
+
 
         GraphicsDevice _device;
 
@@ -37,19 +42,18 @@ namespace MJ_HorseLab2
         List<VertexPositionTexture> grassVertices = new List<VertexPositionTexture>();
         List<VertexPositionTexture> dirtVertices = new List<VertexPositionTexture>();
 
-        public Chunk(GraphicsDevice device, Texture2D stoneTexture, Texture2D dirtTexture, Texture2D grassTexture, Texture2D map, ReadHue hue, int xPos, int zPos)
+        Tank _tank;
+
+        public Chunk(GraphicsDevice device, Texture2D[] texture, Texture2D map, ReadHue hue, int xPos, int zPos, Tank tank)
         {
-            _stoneTexture = stoneTexture;
-            _dirtTexture = dirtTexture;
-            _grassTexture = grassTexture;
+            _stoneTexture = texture[0];
+            _dirtTexture = texture[1];
+            _grassTexture = texture[2];
+            _dynamicTexture = texture[3];
             _device = device;
             _xPos = xPos;
             _zPos = zPos;
-
-            //ReadHue hue = new ReadHue(map);
-
-            //chunkData = hue.chunkData;
-
+            _tank = tank;
             chunkData = hue.GetChunkData(xPos, zPos);
 
             Init();
@@ -94,11 +98,9 @@ namespace MJ_HorseLab2
                 for (int y = 0; y < chunkHeight; y++)
                 {
                     for (int tempZ = 0; tempZ < 16; tempZ++)
-                    //for (int z = 0; z < chunkDepth; z++)
                     {
                         int x = tempX + _xPos;
                         int z = tempZ + _zPos;
-                        //Debug.WriteLine("X är =" + _xPos + "  Z är då: " + _zPos);
                         switch (chunkData[tempX, y, tempZ])
                         {
                             case STONE:
@@ -295,7 +297,14 @@ namespace MJ_HorseLab2
         }
         private void DrawGrass(Camera camera, BasicEffect effect)
         {
-            effect.Texture = _grassTexture;
+            if(_tank.Position.Y > 10) 
+            {
+                 effect.Texture = _dynamicTexture;
+            }
+            else
+            {
+                effect.Texture = _grassTexture;
+            }
             Matrix center = Matrix.CreateTranslation(new Vector3(-0.5f, -0.5f, -0.5f));
             //Matrix translate = Matrix.CreateTranslation(location);
             effect.View = camera.ViewMatrix;

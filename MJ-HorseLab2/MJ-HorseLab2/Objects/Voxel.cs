@@ -99,11 +99,6 @@ namespace MJ_HorseLab2
              
         public List<VertexPositionTexture> BuildTexture()
         {
-            Color color = Color.Red;
-            Color color1 = Color.Beige;
-            Color color2 = Color.Black;
-            Color color3 = Color.Green;
-
             List<VertexPositionTexture> vList = new List<VertexPositionTexture>();
 
             vList.Add(new VertexPositionTexture(LEFT_FACE_POS[2], LEFT_FACE_TEXCOORD[0]));
