@@ -19,6 +19,7 @@ namespace MJ_HorseLab2
         const byte DIRT = 2;
         const byte GRASS = 3;
         const byte EMPTY = 0;
+        //public byte[, ,] chunkData;
         private byte[, ,] worldData;
         private List<Chunk> chunkList;
         private bool culling;
@@ -118,20 +119,11 @@ namespace MJ_HorseLab2
                 {
                     for (int y = 0; y < 32; y++)
                     {
-                        //if culling is chosen used culledWorldData
-                        //else used worldData
                         chunkData[x, y, z] = worldData[(byte)xPos + x, y, (byte)zPos + z];
-                        //chunkData[x, y, z] = culledWorldData[(byte)xPos, y, (byte)zPos];
                     }
-
                 }
-
             }
-
             return culling ? GetCulledChunkData(chunkData) : chunkData;
-
-
-
         }
 
 
@@ -162,36 +154,11 @@ namespace MJ_HorseLab2
                         {
                             culledChunkData[x, y, z] = chunkData[x, y, z];
                         }
-
                     }
                 }
             }
 
             return culledChunkData;
-        }
-
-
-
-
-        private void CreateBoundingBoxes()
-        {
-            byte[, ,] chunkData = new byte[16, HEIGHT, 16];
-
-            for (int x = 0; x < _map.Width; x++)
-            {
-                for (int z = 0; z < _map.Height; z++)
-                {
-                    for (int y = 0; y < HEIGHT; y++)
-                    {
-                        if (y != HEIGHT - 1 && worldData[x, y + 1, z] == EMPTY) //och även om den är 0???
-                        {
-                            //create new bounding box for that voxel
-                            break;
-                        }
-                    }
-                }
-            }
-
         }
 
 

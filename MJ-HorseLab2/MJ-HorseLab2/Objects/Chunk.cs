@@ -15,7 +15,7 @@ namespace MJ_HorseLab2
         const int chunkDepth = 16;
         const int chunkHeight = 32;
 
-        
+        static float x = 1;
 
         const byte STONE = 1;
         const byte DIRT = 2;
@@ -24,20 +24,25 @@ namespace MJ_HorseLab2
 
         private int _xPos;
         private int _zPos;
+        private int nrChunksX;
+        private int nrChunksY;
+        private int nrChunksZ;
+        private bool isSetVoxelSmal;
 
         Texture2D _stoneTexture;
         Texture2D _dirtTexture;
         Texture2D _grassTexture;
         Texture2D _dynamicTexture;
 
-        VertexBuffer _stoneBuffer;
-        VertexBuffer _grassBuffer;
-        VertexBuffer _dirtBuffer;
+        public VertexBuffer _stoneBuffer;
+        public VertexBuffer _grassBuffer;
+        public VertexBuffer _dirtBuffer;
 
 
         GraphicsDevice _device;
 
         byte[, ,] chunkData;
+        ushort[, ,] doubleChunkData;
         List<VertexPositionTexture> stoneVertices = new List<VertexPositionTexture>();
         List<VertexPositionTexture> grassVertices = new List<VertexPositionTexture>();
         List<VertexPositionTexture> dirtVertices = new List<VertexPositionTexture>();
@@ -54,9 +59,18 @@ namespace MJ_HorseLab2
             _xPos = xPos;
             _zPos = zPos;
             _tank = tank;
+            isSetVoxelSmal = false;
+            nrChunksX = 16;
+            nrChunksY = 32;
+            nrChunksZ = 16;
+            //x = 1f;
             chunkData = hue.GetChunkData(xPos, zPos);
+            ConvertToDoubleVoxelsInChunk();
+            isSetVoxelSmal = tank.isVoxelSmall;
 
-            Init();
+
+                Init();
+            
 
             if (stoneVertices.Count > 0)
             {
@@ -75,12 +89,53 @@ namespace MJ_HorseLab2
             }
         }
 
-        Vector3[] LEFT_FACE_POS = { new Vector3(1, 0, 0), new Vector3(1, 1, 0), new Vector3(1, 0, 1), new Vector3(1, 1, 1) };
-        Vector3[] RIGHT_FACE_POS = { new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1), new Vector3(0, 1, 1) };
-        Vector3[] TOP_FACE_POS = { new Vector3(0, 1, 0), new Vector3(1, 1, 0), new Vector3(1, 1, 1), new Vector3(0, 1, 1) };
-        Vector3[] BOTTOM_FACE_POS = { new Vector3(1, 0, 0), new Vector3(0, 0, 0), new Vector3(1, 0, 1), new Vector3(0, 0, 1) };
-        Vector3[] BACK_FACE_POS = { new Vector3(0, 0, 1), new Vector3(1, 0, 1), new Vector3(1, 1, 1), new Vector3(0, 1, 1) };
-        Vector3[] FRONT_FACE_POS = { new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(1, 1, 0), new Vector3(0, 1, 0) };
+        private void setVoxelSmall()
+        {
+            if (_tank.isVoxelSmall)
+            {
+                nrChunksX = 32;
+                nrChunksY = 64;
+                nrChunksZ = 32;
+                x = 0.5f;
+                Init();
+                
+            }
+            else
+            {
+                nrChunksX = 16;
+                nrChunksY = 32;
+                nrChunksZ = 16;
+                x = 1f;
+            }
+            
+        }
+
+
+        private void ConvertToDoubleVoxelsInChunk()
+        {
+            doubleChunkData = new ushort[32, 64, 32];
+
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 32; y++)
+                {
+                    for (int z = 0; z < 16; z++)
+                    {
+                        //for (int i = 0; i < 2; i++)
+                        //{
+                            doubleChunkData[x,y,z] = chunkData[x, y, z];
+                        //}
+                    }
+                }
+            }
+        }
+
+        Vector3[] LEFT_FACE_POS = { new Vector3(x, 0, 0), new Vector3(x, x, 0), new Vector3(x, 0, x), new Vector3(x, x, x) };
+        Vector3[] RIGHT_FACE_POS = { new Vector3(0, 0, 0), new Vector3(0, x, 0), new Vector3(0, 0, x), new Vector3(0, x, x) };
+        Vector3[] TOP_FACE_POS = { new Vector3(0, x, 0), new Vector3(x, x, 0), new Vector3(x, x, x), new Vector3(0, x, x) };
+        Vector3[] BOTTOM_FACE_POS = { new Vector3(x, 0, 0), new Vector3(0, 0, 0), new Vector3(x, 0, x), new Vector3(0, 0, x) };
+        Vector3[] BACK_FACE_POS = { new Vector3(0, 0, x), new Vector3(x, 0, x), new Vector3(x, x, x), new Vector3(0, x, x) };
+        Vector3[] FRONT_FACE_POS = { new Vector3(0, 0, 0), new Vector3(x, 0, 0), new Vector3(x, x, 0), new Vector3(0, x, 0) };
 
         Vector2[] LEFT_FACE_TEXCOORD = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
         Vector2[] TOP_FACE_TEXCOORD = { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
@@ -92,16 +147,25 @@ namespace MJ_HorseLab2
 
         public void Init()
         {
-
-            for (int tempX = 0; tempX < 16; tempX++)
+            float offsetX = 0;
+            float offsetZ = 0;
+            float offsetY = 0;
+            for (float tempX = 0; tempX < nrChunksX; tempX++)
             {
-                for (int y = 0; y < chunkHeight; y++)
+                for (float tempY = 0; tempY < nrChunksY; tempY++)
                 {
-                    for (int tempZ = 0; tempZ < 16; tempZ++)
+                    for (float tempZ = 0; tempZ < nrChunksZ; tempZ++)
                     {
-                        int x = tempX + _xPos;
-                        int z = tempZ + _zPos;
-                        switch (chunkData[tempX, y, tempZ])
+                        if (isSetVoxelSmal)
+                        {
+                            offsetX = (tempX % 2) == 0 ? (float)0.5 : 0;
+                            offsetZ = (tempZ % 2) == 0 ? (float)0.5 : 0;
+                            offsetY = (tempY % 2) == 0 ? (float)0.5 : 0;
+                        }
+                        float x = tempX + _xPos + offsetX;
+                        float z = tempZ + _zPos + offsetZ;
+                        float y = tempY + offsetY;
+                        switch (chunkData[(int)tempX, (int)tempY, (int)tempZ])
                         {
                             case STONE:
                                 #region StoneVertices
