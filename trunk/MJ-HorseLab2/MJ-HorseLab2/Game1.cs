@@ -22,9 +22,6 @@ namespace MJ_HorseLab2
         SpriteBatch spriteBatch;
         Camera camera;
         FlyingCamera fCamera;
-        Texture2D stoneTexture;
-        Texture2D dirtTexture;
-        Texture2D grassTexture;
         Texture2D map;
         BasicEffect effect;
         ReadHue hue;
@@ -36,7 +33,6 @@ namespace MJ_HorseLab2
 
         Tank tank;
 
-        int switchingTexture = 0;
 
         public Game1()
         {
@@ -117,6 +113,7 @@ namespace MJ_HorseLab2
 
             tank.ProcessInput(gameTime);
 
+
             if (tank.freeFlowCamera)
             {
                 fCamera.ProcessInput(gameTime);
@@ -126,6 +123,8 @@ namespace MJ_HorseLab2
             {
                 camera.Update(tank.Position, tank.Rotation);
             }
+
+
             base.Update(gameTime);
         }
 
@@ -164,6 +163,7 @@ namespace MJ_HorseLab2
                 timeSinceLastUpdate -= updateInterval;
             }
         }
+
 
     }
 }
